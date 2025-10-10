@@ -180,12 +180,15 @@ proxy.map.Add("key", value);    // 自动调用 NotifyMapPostAdd
 
 **Windows 用户（推荐）**：
 ```bash
-# 1. 克隆仓库
+# 1. 克隆仓库（无需 Git LFS）
 git clone https://github.com/No-needto-recall/NoesisDemo.git
 
 # 2. 直接双击 NoesisDemo.uproject 打开项目
 # ✅ 无需编译，开箱即用！
+# ✅ 无需安装 Git LFS（已修复）
 ```
+
+> **注意**：如果遇到"找不到插件"的错误，请确保使用最新的仓库版本（2025-10-10 之后）。早期版本存在 Git LFS 配置问题，已修复。
 
 **Mac/Linux 用户**：
 ```bash

@@ -180,12 +180,15 @@ proxy.map.Add("key", value);    // Automatically calls NotifyMapPostAdd
 
 **Windows Users (Recommended)**:
 ```bash
-# 1. Clone the repository
+# 1. Clone the repository (No Git LFS required)
 git clone https://github.com/No-needto-recall/NoesisDemo.git
 
 # 2. Double-click NoesisDemo.uproject to open the project
 # ✅ No compilation needed, ready out of the box!
+# ✅ No Git LFS installation required (Fixed)
 ```
+
+> **Note**: If you encounter "plugin not found" errors, please ensure you're using the latest repository version (after 2025-10-10). Earlier versions had Git LFS configuration issues, which have been fixed.
 
 **Mac/Linux Users**:
 ```bash
