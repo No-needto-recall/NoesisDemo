@@ -13,22 +13,13 @@
 # Anything in `/RawContent` dir.
 /RawContent/**/* filter=lfs diff=lfs merge=lfs -text
 Binaries/Win64/BlackBoxTurret.exe filter=lfs diff=lfs merge=lfs -text
-Plugins/Puerts/ThirdParty/**/*.a filter=lfs diff=lfs merge=lfs -text
-Plugins/Puerts/ThirdParty/**/*.lib filter=lfs diff=lfs merge=lfs -text
-Plugins/Puerts/ThirdParty/**/*.dll filter=lfs diff=lfs merge=lfs -text
-Plugins/Puerts/ThirdParty/**/*.so filter=lfs diff=lfs merge=lfs -text
-Plugins/Puerts/ThirdParty/**/*.dylib filter=lfs diff=lfs merge=lfs -text
-Plugins/Puerts/Binaries/**/*.dll filter=lfs diff=lfs merge=lfs -text
-Plugins/Puerts/** filter=lfs diff=lfs merge=lfs -text
-*.ts !text !filter !merge !diff
-*.cpp !text !filter !merge !diff
-*.h !text !filter !merge !diff
-*.cs !text !filter !merge !diff
-*.Build.cs !text !filter !merge !diff
-*.uplugin !text !filter !merge !diff
-*.json !text !filter !merge !diff
-*.js !text !filter !merge !diff
-*.txt !text !filter !merge !diff
-*.md !text !filter !merge !diff
-*.ini !text !filter !merge !diff
-*.xml !text !filter !merge !diff
+
+# 插件大文件 LFS 规则（仅二进制文件）
+Plugins/**/ThirdParty/**/*.a filter=lfs diff=lfs merge=lfs -text
+Plugins/**/ThirdParty/**/*.lib filter=lfs diff=lfs merge=lfs -text
+Plugins/**/ThirdParty/**/*.dll filter=lfs diff=lfs merge=lfs -text
+Plugins/**/ThirdParty/**/*.so filter=lfs diff=lfs merge=lfs -text
+Plugins/**/ThirdParty/**/*.dylib filter=lfs diff=lfs merge=lfs -text
+# 编辑器 DLL（已在版本控制中）
+Binaries/**/*.dll filter=lfs diff=lfs merge=lfs -text
+Plugins/**/Binaries/**/*.dll filter=lfs diff=lfs merge=lfs -text
