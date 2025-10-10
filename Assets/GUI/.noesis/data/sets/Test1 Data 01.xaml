@@ -1,0 +1,5 @@
+<vdctx:Test1 xmlns:vdctx="clr-namespace:GUI" TestValue="buttons" xmlns:system="clr-namespace:System;assembly=mscorlib">
+  <vdctx:Test1.StrArr>
+    <system:String>Str111</system:String>
+  </vdctx:Test1.StrArr>
+</vdctx:Test1>

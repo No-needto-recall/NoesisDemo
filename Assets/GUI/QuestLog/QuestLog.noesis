@@ -1,0 +1,5 @@
+<Project>
+  <Assembly>QuestLog</Assembly>
+  <DefaultDataNamespace>QuestLog</DefaultDataNamespace>
+  <StartupDocument>MainPage.xaml</StartupDocument>
+</Project>

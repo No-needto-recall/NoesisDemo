@@ -1,0 +1,18 @@
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d"
+  d:DesignWidth="1920"
+  d:DesignHeight="1080"
+  Background="#FF4D5052" d:DataContext="Test1 Data 01">
+  <Grid>
+    <StackPanel Margin="833,182,833,0">
+      <Button FontSize="23" Command="{Binding Path=TestFunc}" CommandParameter="123456as" Content="{Binding Path=TestValue, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+      <TextBlock Text="{Binding Path=StrArr[0]}" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,28,0,0"/>
+      <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FFB22222" Text="{Binding Path=StrMap[1]}"/>
+      <TextBlock Text="{Binding Path=StrArr[1]}" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,28,0,0"/>
+    </StackPanel>
+  </Grid>
+</Page>

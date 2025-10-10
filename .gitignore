@@ -1,0 +1,207 @@
+#################################
+# Unreal Engine Generated Files #
+#################################
+
+# 忽略所有调试构建文件
+*-DebugGame*
+*.pdb
+
+# 保留非调试Development构建文件
+!/Binaries/Win64/Development/**
+!/Plugins/**/Binaries/Win64/Development/**
+# 但排除Development构建中的调试文件
+/Binaries/Win64/Development/**/*Debug*.*
+/Plugins/**/Binaries/Win64/Development/**/*Debug*.*
+
+# 忽略中间文件和临时目录
+/DerivedDataCache/
+/Intermediate/
+/Plugins/**/Intermediate/
+/Saved/
+/Package/
+/Build/
+
+#################################
+# Visual Studio Generated Files #
+#################################
+# 缓存目录
+.vs/
+
+# VSCode缓存目录
+.vscode/
+
+# VSCode历史记录文件
+**/.history/
+
+# 保留.vsconfig但忽略个人设置
+!.vsconfig
+*.suo
+*.user
+*.sln.DotSettings.user
+
+#################################
+#           Rider Files         #
+#################################
+.idea/
+*.DotSettings.user
+#################################
+#           .NET/WPF Files       #
+#################################
+# NuGet packages 目录（只针对 .NET/C# 项目的 packages 目录）
+/packages/
+/*/packages/
+# 排除 NoesisGUI SDK 的 Packages 目录
+!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Src/Packages/
+
+# WPF/WinForms 生成的文件（排除 NoesisGUI SDK）
+# 先排除 NoesisGUI SDK 的 Bin 目录
+!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Bin/
+!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Lib/
+# 然后应用常规的 Bin/Obj 忽略规则
+[Bb]in/
+[Oo]bj/
+*/[Bb]in/
+*/[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
+
+# NuGet 恢复信息
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/launchSettings.json
+
+#################################
+#           其他内容            #
+#################################
+# 测试内容
+/Content/Test/
+/Content/__ExternalActors__/Test/
+/Content/__ExternalObjects__/Test/
+#################################
+# 额外构建文件和编辑器缓存 #
+#################################
+
+# 忽略日志文件
+*.log
+Saved/Logs/
+Saved/Crashes/
+Saved/Autosaves/
+
+# 忽略编辑器缓存
+Saved/Config/
+
+# 忽略着色器缓存
+Saved/ShaderDebugInfo/
+
+# Hot reload 相关文件
+*_BackupBeforeHotReload.*
+
+# 忽略引擎编译中间文件
+*.modules
+
+# 忽略JetBrains Rider编辑器的缓存文件
+/Plugins/*/Intermediate/FileSystemMappings.ini
+
+# 忽略.NET编译产物
+/Binaries/DotNET/
+
+# 忽略目标文件和模块DLL
+*.target
+*.dll
+*.pdb
+*.exp
+*.lib
+!Plugins/*/ThirdParty/**/*.lib  # 保留第三方库
+
+# 忽略MinGW和QuickJS运行时库
+/Binaries/Win64/libgcc_s_seh-1.dll
+/Binaries/Win64/libwinpthread-1.dll
+/Binaries/Win64/msys-quickjs.dll
+
+# 忽略临时自动生成文件
+*.gen.*
+*_Gen.*
+*.generated.*
+
+# 版本控制过程中的冲突文件
+*.orig
+
+# 防止误提交可能的补丁和备份文件
+*.patch
+*.bak
+*.backup
+# 对未明确指定保留的插件构建文件，全部忽略
+/Plugins/*/Binaries/Win64/Shipping/
+/Plugins/*/Binaries/Win64/DebugGame/
+/Plugins/*/Saved/
+
+# 忽略额外的IDE文件
+/.idea/workspace.xml
+/.idea/tasks.xml
+/.vs/ProjectSettings.json
+/.vs/VSWorkspaceState.json
+
+# 需要保留的特定二进制文件
+!/Binaries/Win64/CwsClient.exe
+!/Binaries/Win64/OpenImageDenoise.dll
+!/Binaries/Win64/tbb.dll
+!/Binaries/Win64/tbb12.dll
+!/Binaries/Win64/tbbmalloc.dll
+!/Binaries/Win64/D3D12/D3D12Core.dll
+!/Binaries/Win64/D3D12/d3d12SDKLayers.dll
+
+# 额外忽略的编译文件
+/Binaries/Win64/D3D12/D3D12Core.dll
+/Binaries/Win64/D3D12/d3d12SDKLayers.dll
+/Binaries/Win64/OpenImageDenoise.dll
+/Binaries/Win64/tbb.dll
+/Binaries/Win64/tbb12.dll
+/Binaries/Win64/tbbmalloc.dll
+Binaries/Win64/BlackBoxTurret.exe
+node_modules/
+Plugins/Puerts/Source/CSharpParamDefaultValueMetas
+ts_file_versions_info.json
+
+# 忽略插件编译产物（除了第三方库）
+/Plugins/*/Binaries/
+!/Plugins/*/ThirdParty/
+
+# PuerTS 插件特殊规则
+# 保留源代码、资源和第三方库
+!/Plugins/Puerts/
+!/Plugins/Puerts/Source/**
+!/Plugins/Puerts/Content/**
+!/Plugins/Puerts/Resources/**
+!/Plugins/Puerts/ThirdParty/**
+!/Plugins/Puerts/Typing/**
+!/Plugins/Puerts/PuertsEditor/**
+!/Plugins/Puerts/*.uplugin
+!/Plugins/Puerts/*.js
+!/Plugins/Puerts/*.json
+
+# 但忽略 PuerTS 的调试和中间文件
+/Plugins/Puerts/Intermediate/
+/Plugins/Puerts/Saved/
+/Plugins/Puerts/Binaries/
+/Plugins/Puerts/**/*.pdb
+/Plugins/Puerts/**/*.exp
+/Plugins/Puerts/**/*.sup.lib
+/Plugins/Puerts/**/*.sup.exp
+/Plugins/Puerts/**/obj/
+
+# 但是保留必要的运行时 DLL
+!/Plugins/Puerts/Binaries/Win64/libnode.dll
+
+# NoesisGUI 插件必要的运行时库
+!/Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Bin/windows_x86_64/Noesis.dll
+!/Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Lib/windows_x86_64/Noesis.lib
+!/Plugins/NoesisGUI/Binaries/Win64/Noesis.dll
+Plugins/Puerts/Source/CSharpParamDefaultValueMetas/CSharpParamDefaultValueMetas.ubtplugin.csproj.props
+ClaudeTmp
+
+#################################
+#      Claude Code Settings     #
+#################################
+# 忽略 Claude Code 本地配置文件
+.claude/settings.local.json
