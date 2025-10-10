@@ -12,6 +12,30 @@ English | [简体中文](README.md)
 
 ---
 
+## 📑 Table of Contents
+
+- [Project Overview](#-project-overview)
+- [Core Features](#-core-features)
+- [Quick Start](#-quick-start)
+  - [Requirements](#requirements)
+  - [Getting the Project](#-getting-the-project)
+  - [Compile TypeScript](#compile-typescript)
+  - [Create a Simple UI](#create-a-simple-ui)
+- [Sample Descriptions](#-sample-descriptions)
+- [Technical Architecture](#️-technical-architecture)
+  - [Core Components](#core-components)
+  - [Data Binding Flow](#data-binding-flow)
+  - [Three Core Technologies](#three-core-technologies)
+- [Project Structure](#-project-structure)
+- [Technical Details](#-technical-details)
+  - [Property Notification API](#property-notification-api)
+  - [Technical Limitations and Solutions](#️-technical-limitations-and-solutions)
+- [Performance Considerations](#-performance-considerations)
+- [Development Suggestions](#-development-suggestions)
+- [Contributing and Contact](#-contributing-and-contact)
+
+---
+
 ## 📖 Project Overview
 
 This is an **Unreal Engine 5.4** demo project showcasing how to write **NoesisGUI** ViewModes using **TypeScript**, achieving complete MVVM data binding.
@@ -23,7 +47,9 @@ Traditional NoesisGUI development requires writing ViewModes in Blueprint or C++
 - **PuerTS UClass Extends**: [https://puerts.github.io/docs/puerts/unreal/uclass_extends/](https://puerts.github.io/docs/puerts/unreal/uclass_extends/)
 - **NoesisGUI Property Change Notifications**: [https://www.noesisengine.com/docs/Gui.Core.UnrealTutorial.html#property-change-notifications](https://www.noesisengine.com/docs/Gui.Core.UnrealTutorial.html#property-change-notifications)
 
-### ✨ Core Features
+---
+
+## ✨ Core Features
 
 - ✅ **Perfect Recreation of Official Samples**: Successfully recreated NoesisGUI's official **Buttons** and **QuestLog** samples using TypeScript
 - 🚀 **TypeScript-Based ViewModes**: Use PuerTS's `uclass_extends` to inherit UE classes and auto-generate Blueprints
@@ -32,128 +58,18 @@ Traditional NoesisGUI development requires writing ViewModes in Blueprint or C++
 - 📦 **Version Control Friendly**: Fully code-based, say goodbye to Blueprint merge conflicts
 - ⚡ **Automatic Property Notifications**: NoesisProxy automatically handles PropertyChanged, supports TArray and TMap
 
----
+### Why Choose the TypeScript Solution?
 
-## 🎯 Why Choose This Solution?
+Pain points of traditional Blueprint approach:
+- ❌ **Hard to resolve merge conflicts**: Blueprints are binary files, making merge conflicts difficult
+- ❌ **AI cannot understand**: AI cannot read or generate Blueprints
+- ❌ **Version control difficulties**: Hard to perform diff and code review
 
-### Pain Points of Traditional Blueprint Approach
-
-1. **Merge Conflict Nightmare**: Blueprint file merge conflicts are difficult to resolve, hindering team collaboration
-2. **AI Cannot Understand**: AI cannot read or generate Blueprints, missing out on AI-assisted development benefits
-3. **Version Control Difficulties**: Blueprint files are binary format, making diff and code review challenging
-
-### Advantages of TypeScript Solution
-
-| Feature | Blueprint Approach | **TypeScript Approach** |
-|---------|-------------------|------------------------|
-| Merge Conflicts | ❌ Hard to resolve | ✅ Text format, easy to merge |
-| AI Assistance | ❌ AI cannot understand | ✅ AI fully understands, can generate code |
-| Code Review | ❌ Cannot diff | ✅ Standard Git diff |
-| Type Safety | ⚠️ Partial support | ✅ Complete TypeScript type system |
-| Development Efficiency | ⚠️ Visual editing | ✅ Code editor + IntelliSense |
-| Version Control | ❌ Binary files | ✅ Plain text files |
-
----
-
-## 🏗️ Technical Architecture
-
-### Core Components
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Development Workflow                       │
-├─────────────────────────────────────────────────────────────┤
-│  1. Designers provide XAML                                    │
-│     Assets/GUI/Buttons/MainWindow.xaml                       │
-│                                                               │
-│  2. Developers write TypeScript ViewMode                      │
-│     TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts        │
-│                                                               │
-│  3. PuerTS auto-generates Blueprint class                     │
-│     /Game/BluePrints/TypeScript/ViewMode/Buttons/...         │
-│                                                               │
-│  4. TypeScript creates instance and binds                     │
-│     NoesisViewUtils.createViewMode() → NewObject()           │
-│     NoesisViewUtils.createNoesisInstance()                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Three Core Technologies
-
-#### 1. PuerTS's `uclass_extends` - Blueprint Class Generation
-
-```typescript
-// TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
-// View full code: https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
-import * as UE from 'ue';
-import { uproperty, ufunction } from 'ue';
-
-class TS_ButtonsViewMode extends UE.Object {
-    // Static method: returns generated Blueprint class path
-    static Path(): string {
-        return "/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.TS_ButtonsViewMode_C";
-    }
-
-    // Use decorator to define property, bindable in XAML
-    @uproperty.uproperty(uproperty.EditAnywhere, uproperty.BlueprintReadWrite)
-    TestValue: string;
-
-    // Use decorator to define command, bindable in XAML
-    @ufunction.ufunction(ufunction.BlueprintCallable)
-    StartCommand(): void {
-        console.log("StartCommand Clicked");
-    }
-}
-```
-
-**PuerTS automatically generates the corresponding Blueprint class** at path `/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode_C`
-
-#### 2. UNoesisViewModeInstance - Solving DataContext Limitations
-
-The official `UNoesisInstance` **does not allow dynamically setting DataContext**, so we created a custom subclass:
-
-```cpp
-// Source/NoesisViewMode/Public/NoesisViewModeInstance.h
-// View full code: https://github.com/No-needto-recall/NoesisDemo/blob/main/Source/NoesisViewMode/Public/NoesisViewModeInstance.h
-UCLASS()
-class UNoesisViewModeInstance : public UNoesisInstance {
-    GENERATED_BODY()
-
-public:
-    // Pending DataContext to be set
-    UPROPERTY()
-    UObject* PendingDataContext;
-
-protected:
-    // Override XamlLoaded event to set DataContext after XAML loads
-    virtual void XamlLoaded_Implementation() override;
-};
-```
-
-**Key Point**: Setting DataContext in the `XamlLoaded` callback ensures data binding occurs after XAML is loaded.
-
-#### 3. NoesisProxy - Automatic Property Notifications
-
-Uses JavaScript Proxy API to intercept property modifications and automatically trigger NoesisGUI notifications:
-
-```typescript
-// NoesisProxy.ts - View full code: https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/NoesisProxy.ts
-// Create ViewMode
-const viewMode = NoesisViewUtils.createViewMode(TS_ButtonsViewMode.Path());
-
-// Wrap with Proxy for automatic notifications
-const proxy = createNoesisProxy<TS_ButtonsViewMode>(viewMode);
-
-// Any property modification automatically notifies NoesisGUI to update
-proxy.TestValue = "New Value";  // Automatically calls NotifyPropertyChanged
-
-// Supports TArray automatic notifications
-proxy.items.Add(newItem);       // Automatically calls NotifyArrayPostAdd
-proxy.items.RemoveAt(0);        // Automatically calls NotifyArrayPreRemove + NotifyArrayPostRemove
-
-// Supports TMap automatic notifications
-proxy.map.Add("key", value);    // Automatically calls NotifyMapPostAdd
-```
+Advantages of TypeScript solution:
+- ✅ **Text format, easy to merge**: Standard Git version control
+- ✅ **AI fully understands**: Enjoy AI-assisted development
+- ✅ **Complete type system**: TypeScript type checking and IntelliSense
+- ✅ **Code review friendly**: Standard Git diff, facilitates team collaboration
 
 ---
 
@@ -178,44 +94,13 @@ proxy.map.Add("key", value);    // Automatically calls NotifyMapPostAdd
 
 ### 📦 Getting the Project
 
-#### Option 1: Download Release Version (Recommended ⭐, No Git Required)
-
-1. Visit the [Releases page](https://github.com/No-needto-recall/NoesisDemo/releases)
-2. Download the latest `NoesisDemo-vX.X.X-Source-Full.zip`
-3. Extract to a local directory
-4. Double-click `NoesisDemo.uproject` to open the project
-
-**Benefits**:
-- ✅ Includes all LFS files (pre-compiled DLLs)
-- ✅ No Git or Git LFS required
-- ✅ Extract and use, ready out of the box
-- ✅ Perfect for users unfamiliar with Git
-
-#### Option 2: Use Git Clone (Recommended for Developers)
-
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/No-needto-recall/NoesisDemo.git
 
-# 2. Double-click NoesisDemo.uproject to open the project
+# Double-click NoesisDemo.uproject to open the project
 # ✅ No compilation needed, ready out of the box!
 ```
-
-**Benefits**:
-- ✅ Supports version updates (git pull)
-- ✅ Suitable for development and code contributions
-- ✅ Access to complete commit history
-
-#### ⚠️ Not Recommended: Using "Download ZIP" Button
-
-GitHub's "Download ZIP" button **cannot download Git LFS files** (editor DLLs), resulting in the need to recompile.
-
-**If you accidentally used "Download ZIP"**:
-- Project will prompt to rebuild modules
-- Requires Visual Studio 2022 with C++ development tools
-- Compilation takes approximately 5-15 minutes
-
-**Solution**: Delete and re-download using "Option 1" or "Option 2" above.
 
 **Mac/Linux Users**:
 ```bash
@@ -321,50 +206,6 @@ NoesisViewUtils.attachToViewport(instance, gameInstance);
 
 ---
 
-## 📂 Project Structure
-
-```
-NoesisDemo/
-├── Assets/                         # NoesisGUI resources
-│   └── GUI/                        # XAML UI files
-│       ├── Buttons/                # Buttons sample
-│       │   ├── MainWindow.xaml
-│       │   └── Resources.xaml
-│       └── QuestLog/               # QuestLog sample
-│           ├── MainPage.xaml
-│           └── Resources.xaml
-│
-├── TypeScript/                     # TypeScript source code
-│   ├── main.ts                     # PuerTS entry point
-│   ├── NoesisProxy.ts              # Automatic property notification Proxy
-│   ├── NoesisViewUtils.ts          # View creation utility class
-│   ├── ScriptCallHandler.ts        # C++ call router
-│   └── ViewMode/                   # ViewMode implementations
-│       ├── Buttons/
-│       │   └── TS_ButtonsViewMode.ts
-│       └── QuestLog/
-│           ├── TS_QuestLogViewMode.ts
-│           └── TS_Quest.ts
-│
-├── Source/                         # C++ source code
-│   ├── NoesisDemo/                 # Main game module
-│   │   ├── NoesisDemoGameInstance.h/cpp
-│   │   └── NoesisDemoPuertsSubsystem.h/cpp
-│   └── NoesisViewMode/             # ViewMode framework module
-│       ├── NoesisViewModeInstance.h/cpp      # Custom Instance
-│       └── NoesisNotifyHelperLibrary.h/cpp   # Property notification API
-│
-├── Content/
-│   ├── JavaScript/                 # Compiled JS (tsc output)
-│   ├── GUI/                        # Imported XAML resources
-│   └── BluePrints/
-│       └── TypeScript/ViewMode/    # PuerTS-generated Blueprint classes
-│
-└── Typing/                         # TypeScript type definitions (PuerTS-generated)
-```
-
----
-
 ## 🎨 Sample Descriptions
 
 ### Buttons Sample
@@ -421,7 +262,28 @@ class TS_QuestLogViewMode extends UE.Object {
 
 ---
 
-## 🔧 Technical Details
+## 🏗️ Technical Architecture
+
+### Core Components
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Development Workflow                       │
+├─────────────────────────────────────────────────────────────┤
+│  1. Designers provide XAML                                    │
+│     Assets/GUI/Buttons/MainWindow.xaml                       │
+│                                                               │
+│  2. Developers write TypeScript ViewMode                      │
+│     TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts        │
+│                                                               │
+│  3. PuerTS auto-generates Blueprint class                     │
+│     /Game/BluePrints/TypeScript/ViewMode/Buttons/...         │
+│                                                               │
+│  4. TypeScript creates instance and binds                     │
+│     NoesisViewUtils.createViewMode() → NewObject()           │
+│     NoesisViewUtils.createNoesisInstance()                   │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ### Data Binding Flow
 
@@ -451,6 +313,131 @@ class TS_QuestLogViewMode extends UE.Object {
 7. Property updates
    NoesisProxy intercepts → NotifyPropertyChanged → UI refreshes
 ```
+
+### Three Core Technologies
+
+#### 1. PuerTS's `uclass_extends` - Blueprint Class Generation
+
+```typescript
+// TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
+// View full code: https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
+import * as UE from 'ue';
+import { uproperty, ufunction } from 'ue';
+
+class TS_ButtonsViewMode extends UE.Object {
+    // Static method: returns generated Blueprint class path
+    static Path(): string {
+        return "/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.TS_ButtonsViewMode_C";
+    }
+
+    // Use decorator to define property, bindable in XAML
+    @uproperty.uproperty(uproperty.EditAnywhere, uproperty.BlueprintReadWrite)
+    TestValue: string;
+
+    // Use decorator to define command, bindable in XAML
+    @ufunction.ufunction(ufunction.BlueprintCallable)
+    StartCommand(): void {
+        console.log("StartCommand Clicked");
+    }
+}
+```
+
+**PuerTS automatically generates the corresponding Blueprint class** at path `/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode_C`
+
+#### 2. UNoesisViewModeInstance - Solving DataContext Limitations
+
+The official `UNoesisInstance` **does not allow dynamically setting DataContext**, so we created a custom subclass:
+
+```cpp
+// Source/NoesisViewMode/Public/NoesisViewModeInstance.h
+// View full code: https://github.com/No-needto-recall/NoesisDemo/blob/main/Source/NoesisViewMode/Public/NoesisViewModeInstance.h
+UCLASS()
+class UNoesisViewModeInstance : public UNoesisInstance {
+    GENERATED_BODY()
+
+public:
+    // Pending DataContext to be set
+    UPROPERTY()
+    UObject* PendingDataContext;
+
+protected:
+    // Override XamlLoaded event to set DataContext after XAML loads
+    virtual void XamlLoaded_Implementation() override;
+};
+```
+
+**Key Point**: Setting DataContext in the `XamlLoaded` callback ensures data binding occurs after XAML is loaded.
+
+#### 3. NoesisProxy - Automatic Property Notifications
+
+Uses JavaScript Proxy API to intercept property modifications and automatically trigger NoesisGUI notifications:
+
+```typescript
+// NoesisProxy.ts - View full code: https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/NoesisProxy.ts
+// Create ViewMode
+const viewMode = NoesisViewUtils.createViewMode(TS_ButtonsViewMode.Path());
+
+// Wrap with Proxy for automatic notifications
+const proxy = createNoesisProxy<TS_ButtonsViewMode>(viewMode);
+
+// Any property modification automatically notifies NoesisGUI to update
+proxy.TestValue = "New Value";  // Automatically calls NotifyPropertyChanged
+
+// Supports TArray automatic notifications
+proxy.items.Add(newItem);       // Automatically calls NotifyArrayPostAdd
+proxy.items.RemoveAt(0);        // Automatically calls NotifyArrayPreRemove + NotifyArrayPostRemove
+
+// Supports TMap automatic notifications
+proxy.map.Add("key", value);    // Automatically calls NotifyMapPostAdd
+```
+
+---
+
+## 📂 Project Structure
+
+```
+NoesisDemo/
+├── Assets/                         # NoesisGUI resources
+│   └── GUI/                        # XAML UI files
+│       ├── Buttons/                # Buttons sample
+│       │   ├── MainWindow.xaml
+│       │   └── Resources.xaml
+│       └── QuestLog/               # QuestLog sample
+│           ├── MainPage.xaml
+│           └── Resources.xaml
+│
+├── TypeScript/                     # TypeScript source code
+│   ├── main.ts                     # PuerTS entry point
+│   ├── NoesisProxy.ts              # Automatic property notification Proxy
+│   ├── NoesisViewUtils.ts          # View creation utility class
+│   ├── ScriptCallHandler.ts        # C++ call router
+│   └── ViewMode/                   # ViewMode implementations
+│       ├── Buttons/
+│       │   └── TS_ButtonsViewMode.ts
+│       └── QuestLog/
+│           ├── TS_QuestLogViewMode.ts
+│           └── TS_Quest.ts
+│
+├── Source/                         # C++ source code
+│   ├── NoesisDemo/                 # Main game module
+│   │   ├── NoesisDemoGameInstance.h/cpp
+│   │   └── NoesisDemoPuertsSubsystem.h/cpp
+│   └── NoesisViewMode/             # ViewMode framework module
+│       ├── NoesisViewModeInstance.h/cpp      # Custom Instance
+│       └── NoesisNotifyHelperLibrary.h/cpp   # Property notification API
+│
+├── Content/
+│   ├── JavaScript/                 # Compiled JS (tsc output)
+│   ├── GUI/                        # Imported XAML resources
+│   └── BluePrints/
+│       └── TypeScript/ViewMode/    # PuerTS-generated Blueprint classes
+│
+└── Typing/                         # TypeScript type definitions (PuerTS-generated)
+```
+
+---
+
+## 🔧 Technical Details
 
 ### Property Notification API
 
@@ -581,95 +568,33 @@ proxyViewMode.AddQuest("Retaliation", Images2, QuestDifficulty.Hard, ...);
 
 ## ⚡ Performance Considerations
 
-### Performance Analysis
+### Performance Characteristics
 
-This solution **has not been stress-tested yet**, but from an architectural perspective, it has the following performance characteristics:
+This solution **has not been stress-tested yet**, but from an architectural perspective:
 
-#### Performance Overhead Sources
+**Performance Overhead Sources:**
+1. **Cross-language Call Overhead**: TypeScript ↔ C++ cross-language calls have some overhead
+2. **Reflection and Static Blueprint Function Calls**: Property lookup via reflection is slower than calling NoesisGUI official APIs directly in C++
+3. **NoesisProxy Interception**: JavaScript Proxy interception adds minor overhead
 
-1. **Cross-language Call Overhead**
-   - TypeScript ↔ C++ cross-language calls have some overhead
-   - May become a bottleneck in high-frequency call scenarios (e.g., per-frame property updates)
+### Optimization Recommendations
 
-2. **Reflection and Static Blueprint Function Calls**
-   - `UNoesisNotifyHelperLibrary` notification functions are static Blueprint functions
-   - Property lookup via reflection is slower than calling NoesisGUI official APIs directly in C++
-
-3. **NoesisProxy Interception**
-   - JavaScript Proxy's `set` and `get` interception adds minor overhead
-   - Overhead accumulates for ViewModes with many properties
-
-### Performance Optimization Recommendations
-
-#### Development Phase: Prioritize TypeScript
-
-```
-┌─────────────────────────────────────────┐
-│  Early Development (Recommended TS)      │
-├─────────────────────────────────────────┤
-│  ✅ High development efficiency, fast iteration │
-│  ✅ Easy to modify and debug             │
-│  ✅ AI Coding friendly, auto-generates code │
-│  ✅ Version control friendly, smooth team collaboration │
-│                                          │
-│  ⚠️ Performance not optimized, potential overhead │
-└─────────────────────────────────────────┘
-```
+**Development Phase: Prioritize TypeScript**
 
 In early development, **strongly recommend using TypeScript**:
-- Quickly validate UI logic and interactions
-- Fully leverage AI Coding for development efficiency
-- Enjoy version control benefits of code-based approach
+- ✅ High development efficiency, fast iteration
+- ✅ Easy to modify and debug
+- ✅ AI Coding friendly, auto-generates code
+- ✅ Version control friendly, smooth team collaboration
 
-#### Optimization Phase: Convert to C++ Based on Performance Data
+**Optimization Phase: Convert to C++ Based on Performance Data**
 
-```
-┌─────────────────────────────────────────┐
-│  Performance Optimization Phase (Convert to C++ as needed) │
-├─────────────────────────────────────────┤
-│  1. Perform performance analysis, identify bottleneck ViewModes │
-│  2. Convert high-frequency ViewModes to C++ │
-│  3. Keep low-frequency ViewModes in TypeScript │
-└─────────────────────────────────────────┘
-```
+When the project enters optimization phase, selectively convert bottleneck parts:
+1. Perform performance analysis, identify bottleneck ViewModes
+2. Convert high-frequency ViewModes to C++
+3. Keep low-frequency ViewModes in TypeScript
 
-**When to Consider Converting to C++**:
-- ✅ ViewMode is stable and doesn't require frequent modifications
-- ✅ Performance analysis shows this ViewMode is a bottleneck (high-frequency property updates)
-- ✅ Project enters optimization phase, pursuing ultimate performance
-
-**Conversion Strategy**:
-```cpp
-// Convert from TypeScript to C++ ViewMode
-UCLASS(Blueprintable)
-class UMyViewMode : public UObject {
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FString TestValue;
-
-    UFUNCTION(BlueprintCallable)
-    void UpdateValue(const FString& NewValue) {
-        if (TestValue != NewValue) {
-            TestValue = NewValue;
-            // Directly call NoesisGUI official API, better performance
-            NotifyPropertyChanged(FName("TestValue"));
-        }
-    }
-};
-```
-
-### Performance vs Development Efficiency Trade-off
-
-| Phase | Recommended Approach | Reason |
-|-------|---------------------|--------|
-| **Prototype Development** | TypeScript | Quick idea validation, AI-assisted generation |
-| **Feature Development** | TypeScript | Efficient iteration, team collaboration friendly |
-| **Performance Optimization** | Convert to C++ as needed | Target bottlenecks, maintain overall efficiency |
-| **Production Environment** | TS + C++ Hybrid | Balance development efficiency and runtime performance |
-
-**Core Philosophy**: Enjoy TypeScript's high efficiency in early development, then selectively convert bottleneck parts to C++ during optimization phase, rather than starting with C++ and sacrificing development efficiency.
+**Core Philosophy**: Enjoy TypeScript's high efficiency in early development, then selectively convert bottleneck parts to C++ during optimization phase.
 
 ---
 
@@ -699,24 +624,7 @@ proxy.TestValue = "New Value";
 
 ### 3. Type Safety
 
-TypeScript's type system primarily helps **during the writing phase**:
-
-```typescript
-// PuerTS generates Blueprints via decorators, Blueprint reflection info for NoesisGUI
-class TS_ButtonsViewMode extends UE.Object {
-    // @uproperty decorator generates Blueprint property with reflection info
-    @uproperty.uproperty(uproperty.EditAnywhere, uproperty.BlueprintReadWrite)
-    TestValue: string;  // TypeScript type checking works here
-
-    // @ufunction decorator generates Blueprint function
-    @ufunction.ufunction(ufunction.BlueprintCallable)
-    StartCommand(): void {
-        // Enjoy TypeScript's type hints and checking while writing code
-    }
-}
-```
-
-**Note**: TypeScript interfaces and type aliases are only effective within TS and won't generate to Blueprints. Only members decorated with `@uproperty` and `@ufunction` will be generated as Blueprint reflection info by PuerTS.
+TypeScript's type system primarily helps **during the writing phase**. Only members decorated with `@uproperty` and `@ufunction` will be generated as Blueprint reflection info by PuerTS.
 
 ### 4. Code Reuse
 
@@ -736,21 +644,24 @@ export class NoesisViewUtils {
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributing and Contact
+
+### Contributing
 
 Issues and Pull Requests are welcome!
 
 If you encounter problems or have suggestions, please let us know in [GitHub Issues](https://github.com/No-needto-recall/NoesisDemo/issues).
 
----
+### Contact
 
-## 📄 License
+- NoesisGUI Official Forum: [https://forums.noesisengine.com/](https://forums.noesisengine.com/)
+- GitHub Issues: [https://github.com/No-needto-recall/NoesisDemo/issues](https://github.com/No-needto-recall/NoesisDemo/issues)
+
+### License
 
 This project is licensed under the MIT License.
 
----
-
-## 🙏 Acknowledgments
+### Acknowledgments
 
 - [NoesisGUI](https://www.noesisengine.com/) - Powerful XAML UI framework
 - [PuerTS](https://github.com/Tencent/puerts) - Excellent TypeScript runtime
@@ -758,19 +669,10 @@ This project is licensed under the MIT License.
 
 ---
 
-## 📞 Contact
-
-If you have questions or suggestions, feel free to reach out:
-
-- NoesisGUI Official Forum: [https://forums.noesisengine.com/](https://forums.noesisengine.com/)
-- GitHub Issues: [https://github.com/No-needto-recall/NoesisDemo](https://github.com/No-needto-recall/NoesisDemo)
-
----
-
 <div align="center">
 
 **Develop NoesisGUI with TypeScript, enjoy the pleasure of code-based development!**
 
-Made with ❤️ by NoesisGUI Community
+Made with ❤️ for NoesisGUI Community
 
 </div>

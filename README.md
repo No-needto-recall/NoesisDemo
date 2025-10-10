@@ -12,6 +12,30 @@
 
 ---
 
+## 📑 目录
+
+- [项目简介](#-项目简介)
+- [核心特性](#-核心特性)
+- [快速开始](#-快速开始)
+  - [环境要求](#环境要求)
+  - [获取项目](#-获取项目)
+  - [编译 TypeScript](#编译-typescript)
+  - [创建简单界面](#创建一个简单的界面)
+- [示例说明](#-示例说明)
+- [技术架构](#️-技术架构)
+  - [核心组件](#核心组件)
+  - [数据绑定流程](#数据绑定流程)
+  - [三大核心技术](#三大核心技术)
+- [项目结构](#-项目结构)
+- [技术细节](#-技术细节)
+  - [属性通知 API](#属性通知-api)
+  - [技术限制与解决方案](#-技术限制与解决方案)
+- [性能考量](#-性能考量)
+- [开发建议](#-开发建议)
+- [贡献与联系](#-贡献与联系)
+
+---
+
 ## 📖 项目简介
 
 这是一个 **Unreal Engine 5.4** 示例项目，展示了如何使用 **TypeScript** 编写 **NoesisGUI** 的 ViewMode，实现完整的 MVVM 数据绑定。
@@ -23,7 +47,9 @@
 - **PuerTS UClass Extends**：[https://puerts.github.io/docs/puerts/unreal/uclass_extends/](https://puerts.github.io/docs/puerts/unreal/uclass_extends/)
 - **NoesisGUI Property Change Notifications**：[https://www.noesisengine.com/docs/Gui.Core.UnrealTutorial.html#property-change-notifications](https://www.noesisengine.com/docs/Gui.Core.UnrealTutorial.html#property-change-notifications)
 
-### ✨ 核心特性
+---
+
+## ✨ 核心特性
 
 - ✅ **完美复刻官方示例**：成功用 TypeScript 复刻了 NoesisGUI 官方的 **Buttons** 和 **QuestLog** 示例
 - 🚀 **TypeScript 代码化 ViewMode**：使用 PuerTS 的 `uclass_extends` 继承 UE 类，自动生成蓝图
@@ -32,128 +58,18 @@
 - 📦 **版本控制友好**：完全代码化，告别蓝图文件的合并冲突
 - ⚡ **自动属性通知**：NoesisProxy 自动处理 PropertyChanged，支持 TArray 和 TMap
 
----
+### 为什么选择 TypeScript 方案？
 
-## 🎯 为什么选择这个方案？
+传统蓝图方案的痛点：
+- ❌ **合并冲突难解决**：蓝图是二进制文件，合并冲突困难
+- ❌ **AI 无法理解**：AI 无法读取和生成蓝图
+- ❌ **版本控制困难**：难以进行 diff 和 code review
 
-### 传统蓝图方案的痛点
-
-1. **合并冲突噩梦**：蓝图文件合并冲突难以解决，团队协作困难
-2. **AI 无法理解**：AI 无法读取和生成蓝图，无法享受 AI 辅助开发的便利
-3. **版本控制困难**：蓝图文件是二进制格式，diff 和 code review 困难
-
-### TypeScript 方案的优势
-
-| 特性 | 蓝图方案 | **TypeScript 方案** |
-|------|---------|---------------------|
-| 合并冲突 | ❌ 难以解决 | ✅ 文本格式，易于合并 |
-| AI 辅助 | ❌ AI 无法理解 | ✅ AI 完全理解，可生成代码 |
-| 代码审查 | ❌ 无法 diff | ✅ 标准 Git diff |
-| 类型安全 | ⚠️ 部分支持 | ✅ 完整 TypeScript 类型系统 |
-| 开发效率 | ⚠️ 可视化编辑 | ✅ 代码编辑器 + 智能提示 |
-| 版本控制 | ❌ 二进制文件 | ✅ 纯文本文件 |
-
----
-
-## 🏗️ 技术架构
-
-### 核心组件
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      开发流程                                 │
-├─────────────────────────────────────────────────────────────┤
-│  1. 设计师提供 XAML                                           │
-│     Assets/GUI/Buttons/MainWindow.xaml                       │
-│                                                               │
-│  2. 开发者编写 TypeScript ViewMode                            │
-│     TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts        │
-│                                                               │
-│  3. PuerTS 自动生成蓝图类                                     │
-│     /Game/BluePrints/TypeScript/ViewMode/Buttons/...         │
-│                                                               │
-│  4. TypeScript 创建实例并绑定                                 │
-│     NoesisViewUtils.createViewMode() → NewObject()           │
-│     NoesisViewUtils.createNoesisInstance()                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 三大核心技术
-
-#### 1. PuerTS 的 `uclass_extends` - 蓝图类生成
-
-```typescript
-// TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
-// 查看完整代码：https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
-import * as UE from 'ue';
-import { uproperty, ufunction } from 'ue';
-
-class TS_ButtonsViewMode extends UE.Object {
-    // 静态方法：返回生成的蓝图类路径
-    static Path(): string {
-        return "/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.TS_ButtonsViewMode_C";
-    }
-
-    // 使用装饰器定义属性，可在 XAML 中绑定
-    @uproperty.uproperty(uproperty.EditAnywhere, uproperty.BlueprintReadWrite)
-    TestValue: string;
-
-    // 使用装饰器定义命令，可在 XAML 中绑定
-    @ufunction.ufunction(ufunction.BlueprintCallable)
-    StartCommand(): void {
-        console.log("StartCommand Clicked");
-    }
-}
-```
-
-**PuerTS 会自动生成对应的蓝图类**，路径为 `/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode_C`
-
-#### 2. UNoesisViewModeInstance - 解决 DataContext 限制
-
-官方的 `UNoesisInstance` **不允许动态设置 DataContext**，因此我们自定义了一个子类：
-
-```cpp
-// Source/NoesisViewMode/Public/NoesisViewModeInstance.h
-// 查看完整代码：https://github.com/No-needto-recall/NoesisDemo/blob/main/Source/NoesisViewMode/Public/NoesisViewModeInstance.h
-UCLASS()
-class UNoesisViewModeInstance : public UNoesisInstance {
-    GENERATED_BODY()
-
-public:
-    // 待设置的 DataContext
-    UPROPERTY()
-    UObject* PendingDataContext;
-
-protected:
-    // 重写 XamlLoaded 事件，在 XAML 加载完成后设置 DataContext
-    virtual void XamlLoaded_Implementation() override;
-};
-```
-
-**关键点**：在 `XamlLoaded` 回调中设置 DataContext，确保 XAML 加载完成后再绑定数据。
-
-#### 3. NoesisProxy - 自动属性通知
-
-使用 JavaScript Proxy API 拦截属性修改，自动触发 NoesisGUI 的通知：
-
-```typescript
-// NoesisProxy.ts - 查看完整代码：https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/NoesisProxy.ts
-// 创建 ViewMode
-const viewMode = NoesisViewUtils.createViewMode(TS_ButtonsViewMode.Path());
-
-// 使用 Proxy 包装，实现自动通知
-const proxy = createNoesisProxy<TS_ButtonsViewMode>(viewMode);
-
-// 任何属性修改都会自动通知 NoesisGUI 更新
-proxy.TestValue = "New Value";  // 自动调用 NotifyPropertyChanged
-
-// 支持 TArray 自动通知
-proxy.items.Add(newItem);       // 自动调用 NotifyArrayPostAdd
-proxy.items.RemoveAt(0);        // 自动调用 NotifyArrayPreRemove + NotifyArrayPostRemove
-
-// 支持 TMap 自动通知
-proxy.map.Add("key", value);    // 自动调用 NotifyMapPostAdd
-```
+TypeScript 方案的优势：
+- ✅ **文本格式，易于合并**：标准的 Git 版本控制
+- ✅ **AI 完全理解**：可以享受 AI 辅助开发
+- ✅ **完整的类型系统**：TypeScript 类型检查和智能提示
+- ✅ **代码审查友好**：标准 Git diff，方便团队协作
 
 ---
 
@@ -178,44 +94,13 @@ proxy.map.Add("key", value);    // 自动调用 NotifyMapPostAdd
 
 ### 📦 获取项目
 
-#### 方式 1：下载 Release 版本（推荐 ⭐，无需 Git）
-
-1. 访问 [Releases 页面](https://github.com/No-needto-recall/NoesisDemo/releases)
-2. 下载最新的 `NoesisDemo-vX.X.X-Source-Full.zip`
-3. 解压到本地目录
-4. 双击 `NoesisDemo.uproject` 打开项目
-
-**优点**：
-- ✅ 包含所有 LFS 文件（预编译 DLL）
-- ✅ 无需 Git 和 Git LFS
-- ✅ 解压即用，开箱即用
-- ✅ 适合不熟悉 Git 的用户
-
-#### 方式 2：使用 Git Clone（开发者推荐）
-
 ```bash
-# 1. 克隆仓库
+# 克隆仓库
 git clone https://github.com/No-needto-recall/NoesisDemo.git
 
-# 2. 直接双击 NoesisDemo.uproject 打开项目
+# 直接双击 NoesisDemo.uproject 打开项目
 # ✅ 无需编译，开箱即用！
 ```
-
-**优点**：
-- ✅ 支持版本更新（git pull）
-- ✅ 适合参与开发和贡献代码
-- ✅ 可以查看完整提交历史
-
-#### ⚠️ 不推荐：使用 "Download ZIP" 按钮
-
-GitHub 的 "Download ZIP" 按钮**无法下载 Git LFS 文件**（编辑器 DLL），会导致需要重新编译。
-
-**如果不小心使用了 "Download ZIP"**：
-- 打开项目时会提示重新编译模块
-- 需要安装 Visual Studio 2022 和 C++ 开发工具
-- 编译时间约 5-15 分钟
-
-**解决方法**：删除后使用上述"方式 1"或"方式 2"重新获取项目。
 
 **Mac/Linux 用户**：
 ```bash
@@ -321,50 +206,6 @@ NoesisViewUtils.attachToViewport(instance, gameInstance);
 
 ---
 
-## 📂 项目结构
-
-```
-NoesisDemo/
-├── Assets/                         # NoesisGUI 资源
-│   └── GUI/                        # XAML 界面文件
-│       ├── Buttons/                # Buttons 示例
-│       │   ├── MainWindow.xaml
-│       │   └── Resources.xaml
-│       └── QuestLog/               # QuestLog 示例
-│           ├── MainPage.xaml
-│           └── Resources.xaml
-│
-├── TypeScript/                     # TypeScript 源代码
-│   ├── main.ts                     # PuerTS 入口
-│   ├── NoesisProxy.ts              # 自动属性通知 Proxy
-│   ├── NoesisViewUtils.ts          # 视图创建工具类
-│   ├── ScriptCallHandler.ts        # C++ 调用路由器
-│   └── ViewMode/                   # ViewMode 实现
-│       ├── Buttons/
-│       │   └── TS_ButtonsViewMode.ts
-│       └── QuestLog/
-│           ├── TS_QuestLogViewMode.ts
-│           └── TS_Quest.ts
-│
-├── Source/                         # C++ 源代码
-│   ├── NoesisDemo/                 # 主游戏模块
-│   │   ├── NoesisDemoGameInstance.h/cpp
-│   │   └── NoesisDemoPuertsSubsystem.h/cpp
-│   └── NoesisViewMode/             # ViewMode 框架模块
-│       ├── NoesisViewModeInstance.h/cpp      # 自定义 Instance
-│       └── NoesisNotifyHelperLibrary.h/cpp   # 属性通知 API
-│
-├── Content/
-│   ├── JavaScript/                 # 编译后的 JS（tsc 输出）
-│   ├── GUI/                        # 导入的 XAML 资源
-│   └── BluePrints/
-│       └── TypeScript/ViewMode/    # PuerTS 生成的蓝图类
-│
-└── Typing/                         # TypeScript 类型定义（PuerTS 生成）
-```
-
----
-
 ## 🎨 示例说明
 
 ### Buttons 示例
@@ -421,7 +262,28 @@ class TS_QuestLogViewMode extends UE.Object {
 
 ---
 
-## 🔧 技术细节
+## 🏗️ 技术架构
+
+### 核心组件
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      开发流程                                 │
+├─────────────────────────────────────────────────────────────┤
+│  1. 设计师提供 XAML                                           │
+│     Assets/GUI/Buttons/MainWindow.xaml                       │
+│                                                               │
+│  2. 开发者编写 TypeScript ViewMode                            │
+│     TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts        │
+│                                                               │
+│  3. PuerTS 自动生成蓝图类                                     │
+│     /Game/BluePrints/TypeScript/ViewMode/Buttons/...         │
+│                                                               │
+│  4. TypeScript 创建实例并绑定                                 │
+│     NoesisViewUtils.createViewMode() → NewObject()           │
+│     NoesisViewUtils.createNoesisInstance()                   │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ### 数据绑定流程
 
@@ -451,6 +313,131 @@ class TS_QuestLogViewMode extends UE.Object {
 7. 属性更新
    NoesisProxy 拦截 → NotifyPropertyChanged → UI 刷新
 ```
+
+### 三大核心技术
+
+#### 1. PuerTS 的 `uclass_extends` - 蓝图类生成
+
+```typescript
+// TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
+// 查看完整代码：https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.ts
+import * as UE from 'ue';
+import { uproperty, ufunction } from 'ue';
+
+class TS_ButtonsViewMode extends UE.Object {
+    // 静态方法：返回生成的蓝图类路径
+    static Path(): string {
+        return "/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode.TS_ButtonsViewMode_C";
+    }
+
+    // 使用装饰器定义属性，可在 XAML 中绑定
+    @uproperty.uproperty(uproperty.EditAnywhere, uproperty.BlueprintReadWrite)
+    TestValue: string;
+
+    // 使用装饰器定义命令，可在 XAML 中绑定
+    @ufunction.ufunction(ufunction.BlueprintCallable)
+    StartCommand(): void {
+        console.log("StartCommand Clicked");
+    }
+}
+```
+
+**PuerTS 会自动生成对应的蓝图类**，路径为 `/Game/BluePrints/TypeScript/ViewMode/Buttons/TS_ButtonsViewMode_C`
+
+#### 2. UNoesisViewModeInstance - 解决 DataContext 限制
+
+官方的 `UNoesisInstance` **不允许动态设置 DataContext**，因此我们自定义了一个子类：
+
+```cpp
+// Source/NoesisViewMode/Public/NoesisViewModeInstance.h
+// 查看完整代码：https://github.com/No-needto-recall/NoesisDemo/blob/main/Source/NoesisViewMode/Public/NoesisViewModeInstance.h
+UCLASS()
+class UNoesisViewModeInstance : public UNoesisInstance {
+    GENERATED_BODY()
+
+public:
+    // 待设置的 DataContext
+    UPROPERTY()
+    UObject* PendingDataContext;
+
+protected:
+    // 重写 XamlLoaded 事件，在 XAML 加载完成后设置 DataContext
+    virtual void XamlLoaded_Implementation() override;
+};
+```
+
+**关键点**：在 `XamlLoaded` 回调中设置 DataContext，确保 XAML 加载完成后再绑定数据。
+
+#### 3. NoesisProxy - 自动属性通知
+
+使用 JavaScript Proxy API 拦截属性修改，自动触发 NoesisGUI 的通知：
+
+```typescript
+// NoesisProxy.ts - 查看完整代码：https://github.com/No-needto-recall/NoesisDemo/blob/main/TypeScript/NoesisProxy.ts
+// 创建 ViewMode
+const viewMode = NoesisViewUtils.createViewMode(TS_ButtonsViewMode.Path());
+
+// 使用 Proxy 包装，实现自动通知
+const proxy = createNoesisProxy<TS_ButtonsViewMode>(viewMode);
+
+// 任何属性修改都会自动通知 NoesisGUI 更新
+proxy.TestValue = "New Value";  // 自动调用 NotifyPropertyChanged
+
+// 支持 TArray 自动通知
+proxy.items.Add(newItem);       // 自动调用 NotifyArrayPostAdd
+proxy.items.RemoveAt(0);        // 自动调用 NotifyArrayPreRemove + NotifyArrayPostRemove
+
+// 支持 TMap 自动通知
+proxy.map.Add("key", value);    // 自动调用 NotifyMapPostAdd
+```
+
+---
+
+## 📂 项目结构
+
+```
+NoesisDemo/
+├── Assets/                         # NoesisGUI 资源
+│   └── GUI/                        # XAML 界面文件
+│       ├── Buttons/                # Buttons 示例
+│       │   ├── MainWindow.xaml
+│       │   └── Resources.xaml
+│       └── QuestLog/               # QuestLog 示例
+│           ├── MainPage.xaml
+│           └── Resources.xaml
+│
+├── TypeScript/                     # TypeScript 源代码
+│   ├── main.ts                     # PuerTS 入口
+│   ├── NoesisProxy.ts              # 自动属性通知 Proxy
+│   ├── NoesisViewUtils.ts          # 视图创建工具类
+│   ├── ScriptCallHandler.ts        # C++ 调用路由器
+│   └── ViewMode/                   # ViewMode 实现
+│       ├── Buttons/
+│       │   └── TS_ButtonsViewMode.ts
+│       └── QuestLog/
+│           ├── TS_QuestLogViewMode.ts
+│           └── TS_Quest.ts
+│
+├── Source/                         # C++ 源代码
+│   ├── NoesisDemo/                 # 主游戏模块
+│   │   ├── NoesisDemoGameInstance.h/cpp
+│   │   └── NoesisDemoPuertsSubsystem.h/cpp
+│   └── NoesisViewMode/             # ViewMode 框架模块
+│       ├── NoesisViewModeInstance.h/cpp      # 自定义 Instance
+│       └── NoesisNotifyHelperLibrary.h/cpp   # 属性通知 API
+│
+├── Content/
+│   ├── JavaScript/                 # 编译后的 JS（tsc 输出）
+│   ├── GUI/                        # 导入的 XAML 资源
+│   └── BluePrints/
+│       └── TypeScript/ViewMode/    # PuerTS 生成的蓝图类
+│
+└── Typing/                         # TypeScript 类型定义（PuerTS 生成）
+```
+
+---
+
+## 🔧 技术细节
 
 ### 属性通知 API
 
@@ -581,95 +568,33 @@ proxyViewMode.AddQuest("Retaliation", Images2, QuestDifficulty.Hard, ...);
 
 ## ⚡ 性能考量
 
-### 性能分析
+### 性能特点
 
-本方案**尚未进行压力测试**，但从架构角度分析，存在以下性能特点：
+本方案**尚未进行压力测试**，但从架构角度分析：
 
-#### 性能开销来源
+**性能开销来源：**
+1. **跨语言调用开销**：TypeScript ↔ C++ 的跨语言调用存在一定开销
+2. **反射和静态蓝图函数调用**：通过反射查找属性信息，比 C++ 直接调用 NoesisGUI 官方 API 慢
+3. **NoesisProxy 拦截**：JavaScript Proxy 的拦截会增加少量开销
 
-1. **跨语言调用开销**
-   - TypeScript ↔ C++ 的跨语言调用存在一定开销
-   - 高频调用场景下（如每帧更新的属性）可能成为瓶颈
+### 优化建议
 
-2. **反射和静态蓝图函数调用**
-   - `UNoesisNotifyHelperLibrary` 的通知函数是静态蓝图函数
-   - 通过反射查找属性信息，比 C++ 直接调用 NoesisGUI 官方 API 慢
-
-3. **NoesisProxy 拦截**
-   - JavaScript Proxy 的 `set` 和 `get` 拦截会增加少量开销
-   - 对于大量属性的 ViewMode，开销会累积
-
-### 性能优化建议
-
-#### 开发阶段：优先使用 TypeScript
-
-```
-┌─────────────────────────────────────────┐
-│  开发初期（推荐使用 TypeScript）         │
-├─────────────────────────────────────────┤
-│  ✅ 开发效率高，快速迭代                 │
-│  ✅ 代码易于修改和调试                   │
-│  ✅ AI Coding 友好，自动生成代码         │
-│  ✅ 版本控制友好，团队协作顺畅           │
-│                                          │
-│  ⚠️ 性能未优化，可能存在开销             │
-└─────────────────────────────────────────┘
-```
+**开发阶段：优先使用 TypeScript**
 
 在开发初期，**强烈建议使用 TypeScript 方案**：
-- 快速验证 UI 逻辑和交互
-- 充分利用 AI Coding 提高开发效率
-- 享受代码化带来的版本控制便利
+- ✅ 开发效率高，快速迭代
+- ✅ 代码易于修改和调试
+- ✅ AI Coding 友好，自动生成代码
+- ✅ 版本控制友好，团队协作顺畅
 
-#### 优化阶段：根据性能数据决定是否转 C++
+**优化阶段：根据性能数据决定是否转 C++**
 
-```
-┌─────────────────────────────────────────┐
-│  性能优化阶段（按需转 C++）              │
-├─────────────────────────────────────────┤
-│  1. 进行性能分析，识别瓶颈 ViewMode      │
-│  2. 对高频调用的 ViewMode 转 C++ 实现    │
-│  3. 低频 ViewMode 保持 TypeScript        │
-└─────────────────────────────────────────┘
-```
+当项目进入优化阶段，可以针对性地转换瓶颈部分：
+1. 进行性能分析，识别瓶颈 ViewMode
+2. 对高频调用的 ViewMode 转 C++ 实现
+3. 低频 ViewMode 保持 TypeScript
 
-**何时考虑转 C++**：
-- ✅ ViewMode 已经稳定，不需要频繁修改
-- ✅ 性能分析显示该 ViewMode 是瓶颈（高频更新属性）
-- ✅ 项目进入优化阶段，追求极致性能
-
-**转换策略**：
-```cpp
-// 从 TypeScript 转为 C++ ViewMode
-UCLASS(Blueprintable)
-class UMyViewMode : public UObject {
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FString TestValue;
-
-    UFUNCTION(BlueprintCallable)
-    void UpdateValue(const FString& NewValue) {
-        if (TestValue != NewValue) {
-            TestValue = NewValue;
-            // 直接调用 NoesisGUI 官方 API，性能更好
-            NotifyPropertyChanged(FName("TestValue"));
-        }
-    }
-};
-```
-
-### 性能 vs 开发效率的权衡
-
-| 阶段 | 推荐方案 | 原因 |
-|------|---------|------|
-| **原型开发** | TypeScript | 快速验证想法，AI 辅助生成 |
-| **功能开发** | TypeScript | 高效迭代，团队协作友好 |
-| **性能优化** | 按需转 C++ | 针对瓶颈优化，保持整体效率 |
-| **生产环境** | TS + C++ 混合 | 平衡开发效率和运行性能 |
-
-**核心理念**：在开发初期享受 TypeScript 的高效率，在优化阶段针对性地转换瓶颈部分为 C++，而不是一开始就用 C++ 牺牲开发效率。
+**核心理念**：在开发初期享受 TypeScript 的高效率，在优化阶段针对性地转换瓶颈部分为 C++。
 
 ---
 
@@ -699,24 +624,7 @@ proxy.TestValue = "New Value";
 
 ### 3. 类型安全
 
-TypeScript 的类型系统主要在**编写阶段**提供帮助：
-
-```typescript
-// PuerTS 通过装饰器生成蓝图，蓝图的反射信息供 NoesisGUI 使用
-class TS_ButtonsViewMode extends UE.Object {
-    // @uproperty 装饰器会生成蓝图属性，具有反射信息
-    @uproperty.uproperty(uproperty.EditAnywhere, uproperty.BlueprintReadWrite)
-    TestValue: string;  // TypeScript 类型检查在这里生效
-
-    // @ufunction 装饰器会生成蓝图函数
-    @ufunction.ufunction(ufunction.BlueprintCallable)
-    StartCommand(): void {
-        // 编写代码时享受 TypeScript 的类型提示和检查
-    }
-}
-```
-
-**注意**：TypeScript 的接口（interface）和类型别名仅在 TS 内部有效，不会生成到蓝图中。只有通过 `@uproperty` 和 `@ufunction` 装饰的成员才会被 PuerTS 生成为蓝图的反射信息。
+TypeScript 的类型系统主要在**编写阶段**提供帮助。只有通过 `@uproperty` 和 `@ufunction` 装饰的成员才会被 PuerTS 生成为蓝图的反射信息。
 
 ### 4. 代码复用
 
@@ -736,21 +644,24 @@ export class NoesisViewUtils {
 
 ---
 
-## 🤝 贡献
+## 🤝 贡献与联系
+
+### 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
 如果你在使用过程中遇到问题，或者有任何建议，请在 [GitHub Issues](https://github.com/No-needto-recall/NoesisDemo/issues) 中告诉我们。
 
----
+### 联系方式
 
-## 📄 许可证
+- NoesisGUI 官方论坛：[https://forums.noesisengine.com/](https://forums.noesisengine.com/)
+- GitHub Issues：[https://github.com/No-needto-recall/NoesisDemo/issues](https://github.com/No-needto-recall/NoesisDemo/issues)
+
+### 许可证
 
 本项目采用 MIT 许可证。
 
----
-
-## 🙏 鸣谢
+### 鸣谢
 
 - [NoesisGUI](https://www.noesisengine.com/) - 强大的 XAML UI 框架
 - [PuerTS](https://github.com/Tencent/puerts) - 优秀的 TypeScript 运行时
@@ -758,19 +669,10 @@ export class NoesisViewUtils {
 
 ---
 
-## 📞 联系方式
-
-如果你有任何问题或建议，欢迎通过以下方式联系：
-
-- NoesisGUI 官方论坛：[https://forums.noesisengine.com/](https://forums.noesisengine.com/)
-- GitHub Issues：[https://github.com/No-needto-recall/NoesisDemo/issues](https://github.com/No-needto-recall/NoesisDemo/issues)
-
----
-
 <div align="center">
 
 **用 TypeScript 开发 NoesisGUI，享受代码化带来的愉悦！**
 
-Made with ❤️ by NoesisGUI Community
+Made with ❤️ for NoesisGUI Community
 
 </div>
