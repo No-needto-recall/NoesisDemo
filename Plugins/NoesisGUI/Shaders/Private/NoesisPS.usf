@@ -1,0 +1,575 @@
+#include "/Engine/Private/Common.ush"
+#include "/Engine/Private/GammaCorrectionCommon.ush"
+
+#ifndef EFFECT
+    #error EFFECT not defined
+#endif
+
+// These have to match Noesis::Shader::Enum
+#define RGBA                              0
+#define MASK                              1
+#define CLEAR                             2
+
+#define PATH_SOLID                        3
+#define PATH_LINEAR                       4
+#define PATH_RADIAL                       5
+#define PATH_PATTERN                      6
+#define PATH_PATTERN_CLAMP                7
+#define PATH_PATTERN_REPEAT               8
+#define PATH_PATTERN_MIRROR_U             9
+#define PATH_PATTERN_MIRROR_V            10
+#define PATH_PATTERN_MIRROR              11
+
+#define PATH_AA_SOLID                    12
+#define PATH_AA_LINEAR                   13
+#define PATH_AA_RADIAL                   14
+#define PATH_AA_PATTERN                  15
+#define PATH_AA_PATTERN_CLAMP            16
+#define PATH_AA_PATTERN_REPEAT           17
+#define PATH_AA_PATTERN_MIRROR_U         18
+#define PATH_AA_PATTERN_MIRROR_V         19
+#define PATH_AA_PATTERN_MIRROR           20
+
+#define SDF_SOLID                        21
+#define SDF_LINEAR                       22
+#define SDF_RADIAL                       23
+#define SDF_PATTERN                      24
+#define SDF_PATTERN_CLAMP                25
+#define SDF_PATTERN_REPEAT               26
+#define SDF_PATTERN_MIRROR_U             27
+#define SDF_PATTERN_MIRROR_V             28
+#define SDF_PATTERN_MIRROR               29
+
+#define SDF_LCD_SOLID                    30
+#define SDF_LCD_LINEAR                   31
+#define SDF_LCD_RADIAL                   32
+#define SDF_LCD_PATTERN                  33
+#define SDF_LCD_PATTERN_CLAMP            34
+#define SDF_LCD_PATTERN_REPEAT           35
+#define SDF_LCD_PATTERN_MIRROR_U         36
+#define SDF_LCD_PATTERN_MIRROR_V         37
+#define SDF_LCD_PATTERN_MIRROR           38
+
+#define OPACITY_SOLID                    39
+#define OPACITY_LINEAR                   40
+#define OPACITY_RADIAL                   41
+#define OPACITY_PATTERN                  42
+#define OPACITY_PATTERN_CLAMP            43
+#define OPACITY_PATTERN_REPEAT           44
+#define OPACITY_PATTERN_MIRROR_U         45
+#define OPACITY_PATTERN_MIRROR_V         46
+#define OPACITY_PATTERN_MIRROR           47
+
+#define UPSAMPLE                         48
+#define DOWNSAMPLE                       49
+
+#define SHADOW                           50
+#define BLUR                             51
+
+#if EFFECT == RGBA
+    #define EFFECT_RGBA 1
+
+#elif EFFECT == MASK
+    #define EFFECT_MASK 1
+
+#elif EFFECT == CLEAR
+    #define EFFECT_CLEAR 1
+
+#elif EFFECT == PATH_SOLID
+    #define EFFECT_PATH 1
+    #define PAINT_SOLID 1
+
+#elif EFFECT == PATH_LINEAR
+    #define EFFECT_PATH 1
+    #define PAINT_LINEAR 1
+
+#elif EFFECT == PATH_RADIAL
+    #define EFFECT_PATH 1
+    #define PAINT_RADIAL 1
+
+#elif EFFECT == PATH_PATTERN
+    #define EFFECT_PATH 1
+    #define PAINT_PATTERN 1
+
+#elif EFFECT == PATH_PATTERN_CLAMP
+    #define EFFECT_PATH 1
+    #define PAINT_PATTERN 1
+    #define CLAMP_PATTERN 1
+
+#elif EFFECT == PATH_PATTERN_REPEAT
+    #define EFFECT_PATH 1
+    #define PAINT_PATTERN 1
+    #define REPEAT_PATTERN 1
+
+#elif EFFECT == PATH_PATTERN_MIRROR_U
+    #define EFFECT_PATH 1
+    #define PAINT_PATTERN 1
+    #define MIRRORU_PATTERN 1
+
+#elif EFFECT == PATH_PATTERN_MIRROR_V
+    #define EFFECT_PATH 1
+    #define PAINT_PATTERN 1
+    #define MIRRORV_PATTERN 1
+
+#elif EFFECT == PATH_PATTERN_MIRROR
+    #define EFFECT_PATH 1
+    #define PAINT_PATTERN 1
+    #define MIRROR_PATTERN 1 
+
+#elif EFFECT == PATH_AA_SOLID
+    #define EFFECT_PATH_AA 1
+    #define PAINT_SOLID 1
+
+#elif EFFECT == PATH_AA_LINEAR
+    #define EFFECT_PATH_AA 1
+    #define PAINT_LINEAR 1
+
+#elif EFFECT == PATH_AA_RADIAL
+    #define EFFECT_PATH_AA 1
+    #define PAINT_RADIAL 1
+
+#elif EFFECT == PATH_AA_PATTERN
+    #define EFFECT_PATH_AA 1
+    #define PAINT_PATTERN 1
+
+#elif EFFECT == PATH_AA_PATTERN_CLAMP
+    #define EFFECT_PATH_AA 1
+    #define PAINT_PATTERN 1
+    #define CLAMP_PATTERN 1
+
+#elif EFFECT == PATH_AA_PATTERN_REPEAT
+    #define EFFECT_PATH_AA 1
+    #define PAINT_PATTERN 1
+    #define REPEAT_PATTERN 1
+
+#elif EFFECT == PATH_AA_PATTERN_MIRROR_U
+    #define EFFECT_PATH_AA 1
+    #define PAINT_PATTERN 1
+    #define MIRRORU_PATTERN 1
+
+#elif EFFECT == PATH_AA_PATTERN_MIRROR_V
+    #define EFFECT_PATH_AA 1
+    #define PAINT_PATTERN 1
+    #define MIRRORV_PATTERN 1
+
+#elif EFFECT == PATH_AA_PATTERN_MIRROR
+    #define EFFECT_PATH_AA 1
+    #define PAINT_PATTERN 1
+    #define MIRROR_PATTERN 1 
+
+#elif EFFECT == SDF_SOLID
+    #define EFFECT_SDF 1
+    #define PAINT_SOLID 1
+
+#elif EFFECT == SDF_LINEAR
+    #define EFFECT_SDF 1
+    #define PAINT_LINEAR 1
+
+#elif EFFECT == SDF_RADIAL
+    #define EFFECT_SDF 1
+    #define PAINT_RADIAL 1
+
+#elif EFFECT == SDF_PATTERN
+    #define EFFECT_SDF 1
+    #define PAINT_PATTERN 1
+
+#elif EFFECT == SDF_PATTERN_CLAMP
+    #define EFFECT_SDF 1
+    #define PAINT_PATTERN 1
+    #define CLAMP_PATTERN 1
+
+#elif EFFECT == SDF_PATTERN_REPEAT
+    #define EFFECT_SDF 1
+    #define PAINT_PATTERN 1
+    #define REPEAT_PATTERN 1
+
+#elif EFFECT == SDF_PATTERN_MIRROR_U
+    #define EFFECT_SDF 1
+    #define PAINT_PATTERN 1
+    #define MIRRORU_PATTERN 1
+
+#elif EFFECT == SDF_PATTERN_MIRROR_V
+    #define EFFECT_SDF 1
+    #define PAINT_PATTERN 1
+    #define MIRRORV_PATTERN 1
+
+#elif EFFECT == SDF_PATTERN_MIRROR
+    #define EFFECT_SDF 1
+    #define PAINT_PATTERN 1
+    #define MIRROR_PATTERN 1
+
+#elif EFFECT == SDF_LCD_SOLID
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_SOLID 1
+
+#elif EFFECT == SDF_LCD_LINEAR
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_LINEAR 1
+
+#elif EFFECT == SDF_LCD_RADIAL
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_RADIAL 1
+
+#elif EFFECT == SDF_LCD_PATTERN
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_PATTERN 1
+
+#elif EFFECT == SDF_LCD_PATTERN_CLAMP
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_PATTERN 1
+    #define CLAMP_PATTERN 1
+
+#elif EFFECT == SDF_LCD_PATTERN_REPEAT
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_PATTERN 1
+    #define REPEAT_PATTERN 1
+
+#elif EFFECT == SDF_LCD_PATTERN_MIRROR_U
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_PATTERN 1
+    #define MIRRORU_PATTERN 1
+
+#elif EFFECT == SDF_LCD_PATTERN_MIRROR_V
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_PATTERN 1
+    #define MIRRORV_PATTERN 1
+
+#elif EFFECT == SDF_LCD_PATTERN_MIRROR
+    #define EFFECT_SDF_LCD 1
+    #define PAINT_PATTERN 1
+    #define MIRROR_PATTERN 1
+
+#elif EFFECT == OPACITY_SOLID
+    #define EFFECT_OPACITY 1
+    #define PAINT_SOLID 1
+
+#elif EFFECT == OPACITY_LINEAR
+    #define EFFECT_OPACITY 1
+    #define PAINT_LINEAR 1
+
+#elif EFFECT == OPACITY_RADIAL
+    #define EFFECT_OPACITY 1
+    #define PAINT_RADIAL 1
+
+#elif EFFECT == OPACITY_PATTERN
+    #define EFFECT_OPACITY 1
+    #define PAINT_PATTERN 1
+
+#elif EFFECT == OPACITY_PATTERN_CLAMP
+    #define EFFECT_OPACITY 1
+    #define PAINT_PATTERN 1
+    #define CLAMP_PATTERN 1
+
+#elif EFFECT == OPACITY_PATTERN_REPEAT
+    #define EFFECT_OPACITY 1
+    #define PAINT_PATTERN 1
+    #define REPEAT_PATTERN 1
+
+#elif EFFECT == OPACITY_PATTERN_MIRROR_U
+    #define EFFECT_OPACITY 1
+    #define PAINT_PATTERN 1
+    #define MIRRORU_PATTERN 1
+
+#elif EFFECT == OPACITY_PATTERN_MIRROR_V
+    #define EFFECT_OPACITY 1
+    #define PAINT_PATTERN 1
+    #define MIRRORV_PATTERN 1
+
+#elif EFFECT == OPACITY_PATTERN_MIRROR
+    #define EFFECT_OPACITY 1
+    #define PAINT_PATTERN 1
+    #define MIRROR_PATTERN 1
+
+#elif EFFECT == UPSAMPLE
+    #define EFFECT_UPSAMPLE 1
+
+#elif EFFECT == DOWNSAMPLE
+    #define EFFECT_DOWNSAMPLE 1
+
+#elif EFFECT == SHADOW
+    #define EFFECT_SHADOW 1
+    #define PAINT_SOLID 1
+
+#elif EFFECT == BLUR
+    #define EFFECT_BLUR 1
+    #define PAINT_SOLID 1
+
+#else
+    #error EFFECT not defined
+#endif
+
+#if PAINT_LINEAR || PAINT_RADIAL || PAINT_PATTERN
+    #define HAS_UV0 1
+#endif
+
+#if CLAMP_PATTERN
+    #define HAS_RECT 1
+#endif
+
+#if REPEAT_PATTERN || MIRRORU_PATTERN || MIRRORV_PATTERN || MIRROR_PATTERN
+    #define HAS_RECT 1
+    #define HAS_TILE 1
+#endif
+
+#if EFFECT_SDF || EFFECT_SDF_LCD
+    #define HAS_UV1 1
+    #define HAS_ST1 1
+    #define SDF_SCALE 7.96875
+    #define SDF_BIAS 0.50196078431
+    #define SDF_AA_FACTOR 0.65
+    #define SDF_BASE_MIN 0.125
+    #define SDF_BASE_MAX 0.25
+    #define SDF_BASE_DEV -0.65
+#endif
+
+#if EFFECT_OPACITY
+    #define HAS_UV1 1
+#endif
+
+#if EFFECT_SHADOW
+    #define HAS_UV1 1
+    #define HAS_RECT 1
+#endif
+
+#if EFFECT_BLUR
+    #define HAS_UV1 1
+#endif
+
+#if EFFECT_DOWNSAMPLE
+    #define HAS_UV0 1
+    #define HAS_UV1 1
+    #define HAS_UV2 1
+    #define HAS_UV3 1
+#endif
+
+#if EFFECT_UPSAMPLE
+    #define PAINT_SOLID 1
+    #define HAS_UV0 1
+    #define HAS_UV1 1
+#endif
+
+Texture2D patternTex;
+SamplerState patternSampler;
+
+Texture2D rampsTex;
+SamplerState rampsSampler;
+
+Texture2D imageTex;
+SamplerState imageSampler;
+
+Texture2D glyphsTex;
+SamplerState glyphsSampler;
+
+Texture2D shadowTex;
+SamplerState shadowSampler;
+
+half4 gammaAndAlphaValues;
+
+struct In
+{
+    float4 position: SV_POSITION;
+
+#if PAINT_SOLID
+    nointerpolation half4 color: COLOR;
+#endif
+
+#if HAS_UV0
+    float2 uv0: TEXCOORD0;
+#endif
+
+#if HAS_UV1
+    float2 uv1: TEXCOORD1;
+#endif
+
+#if HAS_UV2
+    float2 uv2: TEXCOORD2;
+#endif
+
+#if HAS_UV3
+    float2 uv3: TEXCOORD3;
+#endif
+
+#if HAS_ST1
+    float4 st1: TEXCOORD2;
+#endif
+
+#if EFFECT_PATH_AA
+    half coverage: COVERAGE;
+#endif
+
+#if HAS_RECT
+    nointerpolation float4 rect: RECT;
+#endif
+
+#if HAS_TILE
+    nointerpolation float4 tile: TILE;
+#endif
+};
+
+struct Out
+{
+    half4 color: SV_Target0;
+
+#if EFFECT_SDF_LCD
+    half4 alpha: SV_Target1;
+#endif
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Out NoesisPS(in In i)
+{
+    /////////////////////////////////////////////////////
+    // Fetch paint color and opacity
+    /////////////////////////////////////////////////////
+    #if PAINT_SOLID
+        half4 paint = i.color;
+        half opacity_ = 1.0;
+
+    #elif PAINT_LINEAR
+        half4 paint = Texture2DSample(rampsTex, rampsSampler, i.uv0);
+        half opacity_ = NoesisPSOpacityConstants.opacity;
+
+    #elif PAINT_RADIAL
+        half dd = NoesisPSRadialGradConstants.radialGrad[1].x * i.uv0.x - NoesisPSRadialGradConstants.radialGrad[1].y * i.uv0.y;
+        half u = NoesisPSRadialGradConstants.radialGrad[0].x * i.uv0.x + NoesisPSRadialGradConstants.radialGrad[0].y * i.uv0.y + NoesisPSRadialGradConstants.radialGrad[0].z *
+            sqrt(i.uv0.x * i.uv0.x + i.uv0.y * i.uv0.y - dd * dd);
+        half4 paint = Texture2DSample(rampsTex, rampsSampler, half2(u, NoesisPSRadialGradConstants.radialGrad[1].z));
+        half opacity_ = NoesisPSRadialGradConstants.radialGrad[0].w;
+
+    #elif PAINT_PATTERN
+        #if CLAMP_PATTERN
+            float inside = all(i.uv0 == clamp(i.uv0, i.rect.xy, i.rect.zw));
+            half4 paint = inside * Texture2DSample(patternTex, patternSampler, i.uv0);
+        #elif REPEAT_PATTERN || MIRRORU_PATTERN || MIRRORV_PATTERN || MIRROR_PATTERN
+            float2 uv = (i.uv0 - i.tile.xy) / i.tile.zw;
+            #if REPEAT_PATTERN
+                uv = frac(uv);
+            #elif MIRRORU_PATTERN
+                uv.x = abs(uv.x - 2.0 * floor((uv.x - 1.0) / 2.0) - 2.0);
+                uv.y = frac(uv.y);
+            #elif MIRRORV_PATTERN
+                uv.x = frac(uv.x);
+                uv.y = abs(uv.y - 2.0 * floor((uv.y - 1.0) / 2.0) - 2.0);
+            #else 
+                uv = abs(uv - 2.0 * floor((uv - 1.0) / 2.0) - 2.0);
+            #endif
+            uv = uv * i.tile.zw + i.tile.xy;
+            float inside = all(uv == clamp(uv, i.rect.xy, i.rect.zw));
+            half4 paint = inside * Texture2DSampleGrad(patternTex, patternSampler, uv, ddx(i.uv0), ddy(i.uv0));
+        #else
+            half4 paint = Texture2DSample(patternTex, patternSampler, i.uv0);
+        #endif
+        #if PATTERN_SRGB
+            paint.xyz = LinearToSrgb(paint.xyz);
+        #endif
+        #if PATTERN_LINEAR
+            paint.xyz = sRGBToLinear(paint.xyz);
+        #endif
+        #if PATTERN_IGNORE_ALPHA
+            paint.a = 1.0;
+        #endif
+        half opacity_ = NoesisPSOpacityConstants.opacity;
+    #endif
+
+    Out o;
+
+    /////////////////////////////////////////////////////
+    // Apply selected effect
+    /////////////////////////////////////////////////////
+    #if EFFECT_RGBA
+        o.color = NoesisPSRgbaConstants.rgba;
+
+    #elif EFFECT_MASK
+        o.color = half4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    #elif EFFECT_CLEAR
+        o.color = half4(0.0f, 0.0f, 0.0f, 0.0f);
+
+    #elif EFFECT_PATH
+        o.color = opacity_ * paint;
+
+    #elif EFFECT_PATH_AA
+        o.color = (opacity_ * i.coverage) * paint;
+
+    #elif EFFECT_OPACITY
+        o.color = Texture2DSample(imageTex, imageSampler, i.uv1) * (opacity_ * paint.a);
+
+    #elif EFFECT_SHADOW
+        half2 uv = clamp(i.uv1 - NoesisShadowConstants.shadowOffset, i.rect.xy, i.rect.zw);
+        half alpha = lerp(Texture2DSample(imageTex, imageSampler, uv).a, Texture2DSample(shadowTex, shadowSampler, uv).a, NoesisShadowConstants.blend);
+        half4 img = Texture2DSample(imageTex, imageSampler, clamp(i.uv1, i.rect.xy, i.rect.zw));
+        o.color = (img + (1.0 - img.a) * (NoesisShadowConstants.shadowColor * alpha)) * paint.a;
+
+    #elif EFFECT_BLUR
+        o.color = lerp(Texture2DSample(imageTex, imageSampler, i.uv1), Texture2DSample(shadowTex, shadowSampler, i.uv1), NoesisBlurConstants.blend) * paint.a;
+
+    #elif EFFECT_SDF
+        half4 color = Texture2DSample(glyphsTex, glyphsSampler, i.uv1);
+        half distance = SDF_SCALE * (color.r - SDF_BIAS);
+
+        #if 1
+            half2 grad = ddx(i.st1);
+        #else
+            // For non-uniform scale or perspective this is the correct code. It is much more complex than the isotropic
+            // case and probably not worth it
+            // http://www.essentialmath.com/GDC2015/VanVerth_Jim_DrawingAntialiasedEllipse.pdf
+            // https://www.essentialmath.com/blog/?p=151
+            half2 Jdx = ddx(i.st1);
+            half2 Jdy = ddy(i.st1);
+            half2 distGrad = half2(ddx(distance), ddy(distance));
+            half distGradLen2 = dot(distGrad, distGrad);
+            distGrad = distGradLen2 < 0.0001 ? half2(0.7071, 0.7071) : distGrad * half(rsqrt(distGradLen2));
+            half2 grad = half2(distGrad.x * Jdx.x + distGrad.y * Jdy.x, distGrad.x * Jdx.y + distGrad.y * Jdy.y);
+        #endif
+
+        half gradLen = (half)length(grad);
+        half scale = 1.0 / gradLen;
+        half base = SDF_BASE_DEV * (1.0f - (clamp(scale, SDF_BASE_MIN, SDF_BASE_MAX) - SDF_BASE_MIN) / (SDF_BASE_MAX - SDF_BASE_MIN));
+        half range = SDF_AA_FACTOR * gradLen;
+        half alpha = smoothstep(base - range, base + range, distance);
+
+        o.color = (alpha * opacity_) * paint;
+
+    #elif EFFECT_SDF_LCD
+        half4 green = Texture2DSample(glyphsTex, glyphsSampler, i.uv1);
+        half3 distance = SDF_SCALE * (green.r - SDF_BIAS);
+
+        half2 Jdx = ddx(i.st1);
+        half2 Jdy = ddy(i.st1);
+        half2 distGrad = half2(ddx(distance.r), ddy(distance.r));
+        half distGradLen2 = dot(distGrad, distGrad);
+        distGrad = distGradLen2 < 0.0001 ? half2(0.7071, 0.7071) : distGrad * half(rsqrt(distGradLen2));
+        half2 grad = half2(distGrad.x * Jdx.x + distGrad.y * Jdy.x, distGrad.x * Jdx.y + distGrad.y * Jdy.y);
+
+        half gradLen = (half)length(grad);
+        half scale = 1.0 / gradLen;
+        half base = SDF_BASE_DEV * (1.0 - (clamp(scale, SDF_BASE_MIN, SDF_BASE_MAX) - SDF_BASE_MIN) / (SDF_BASE_MAX - SDF_BASE_MIN));
+        half range = SDF_AA_FACTOR * gradLen;
+        half3 alpha = smoothstep(base - range, base + range, distance);
+
+        o.color = half4(opacity_ * paint.rgb * alpha.rgb, alpha.g);
+        o.alpha = half4((opacity_ * paint.a) * alpha.rgb, alpha.g);
+
+    #elif EFFECT_DOWNSAMPLE
+        o.color = 
+        (
+            Texture2DSample(patternTex, patternSampler, i.uv0) +
+            Texture2DSample(patternTex, patternSampler, i.uv1) +
+            Texture2DSample(patternTex, patternSampler, i.uv2) +
+            Texture2DSample(patternTex, patternSampler, i.uv3)
+        ) * 0.25;
+
+    #elif EFFECT_UPSAMPLE
+        o.color = lerp(Texture2DSample(imageTex, imageSampler, i.uv1), Texture2DSample(patternTex, patternSampler, i.uv0), paint.a);
+
+    #endif
+
+    #if GAMMA_CORRECTION
+        o.color.rgb = sRGBToLinear(o.color.rgb);
+        float contrastMidpoint = 0.25; //TODO We may want to make the midpoint configurable so that users can pick a different one, based on the overall saturation of their UI.
+        o.color.rgb = saturate(((o.color.rgb - contrastMidpoint) * gammaAndAlphaValues.w) + contrastMidpoint);
+        o.color.rgb = ApplyGammaCorrection(o.color.rgb, gammaAndAlphaValues.x);
+    #endif
+
+    return o;
+}

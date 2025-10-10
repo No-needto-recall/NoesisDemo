@@ -1,0 +1,42 @@
+{
+	"FileVersion": 3,
+	"Version": 3020800,
+	"VersionName": "3.2.8",
+	"FriendlyName": "NoesisGUI",
+	"Description": "Lightweight cross-platform C++ game user interface library based on XAML.",
+	"Category": "UI",
+	"CreatedBy": "Noesis Technologies",
+	"CreatedByURL": "https://www.noesisengine.com",
+	"DocsURL": "https://github.com/Noesis/UE4Plugin/blob/master/README.md",
+	"MarketplaceURL": "",
+	"SupportURL": "https://forums.noesisengine.com",
+	"CanContainContent": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "NoesisRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
+		},
+		{
+			"Name": "NoesisBlueprint",
+			"Type": "UncookedOnly",
+			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "NoesisEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "EnhancedInput",
+			"Enabled": true
+		},
+		{
+			"Name": "CommonUI",
+			"Enabled": false
+		}
+	]
+}

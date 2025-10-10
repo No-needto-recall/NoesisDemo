@@ -1,0 +1,5 @@
+<Project>
+  <Assembly>GUI</Assembly>
+  <DefaultDataNamespace>GUI</DefaultDataNamespace>
+  <StartupDocument>MainPage.xaml</StartupDocument>
+</Project>

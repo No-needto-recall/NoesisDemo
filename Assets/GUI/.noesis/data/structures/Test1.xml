@@ -1,0 +1,4 @@
+<Class Name="Test1">
+  <Property Name="TestValue" Type="String" StringMinWordCount="0" StringMaxWordCount="10"/>
+  <Property Name="StrArr" Type="Collection" SubType="String" CollectionMinItemCount="0" CollectionMaxItemCount="10"/>
+</Class>

@@ -1,0 +1,164 @@
+#include "/Engine/Private/Common.ush"
+#include "/Engine/Private/GammaCorrectionCommon.ush"
+#include "/Engine/Private/InstancedStereo.ush"
+
+struct In
+{
+    float2 position: ATTRIBUTE0;
+
+#if HAS_COLOR
+    half4 color: ATTRIBUTE1;
+#endif
+
+#if HAS_UV0
+    float2 uv0: ATTRIBUTE2;
+#endif
+
+#if HAS_UV1
+    float2 uv1: ATTRIBUTE3;
+#endif
+
+#if HAS_COVERAGE
+    half coverage: ATTRIBUTE4;
+#endif
+
+#if HAS_RECT
+    float4 rect: ATTRIBUTE5;
+#endif
+
+#if HAS_TILE
+    float4 tile: ATTRIBUTE6;
+#endif
+
+#if HAS_IMAGE_POSITION
+    float4 imagePos: ATTRIBUTE7;
+#endif
+
+#if WITH_STEREO
+#if INSTANCED_STEREO
+    uint instanceId : SV_InstanceID;
+#elif MOBILE_MULTI_VIEW
+    uint viewId : SV_ViewID;
+#endif
+#endif
+};
+
+struct Out
+{
+    float4 position: SV_POSITION;
+
+#if HAS_COLOR
+    nointerpolation half4 color: COLOR;
+#endif
+
+#if HAS_UV0
+    float2 uv0: TEXCOORD0;
+#endif
+
+#if HAS_UV1
+    float2 uv1: TEXCOORD1;
+#endif
+
+#if DOWNSAMPLE
+    float2 uv2: TEXCOORD2;
+    float2 uv3: TEXCOORD3;
+#endif
+
+#if SDF
+    float4 st1: TEXCOORD2;
+#endif
+
+#if HAS_COVERAGE
+    half coverage: COVERAGE;
+#endif
+
+#if HAS_RECT
+    nointerpolation float4 rect: RECT;
+#endif
+
+#if HAS_TILE
+    nointerpolation float4 tile: TILE;
+#endif
+
+#if HAS_IMAGE_POSITION
+    float4 imagePos: IMAGE_POSITION;
+#endif
+
+#if WITH_STEREO
+#if INSTANCED_STEREO
+#if MULTI_VIEW
+    nointerpolation uint viewportIndex : SV_ViewPortArrayIndex;
+#else
+    float clipDistance : SV_ClipDistance;
+#endif
+#elif MOBILE_MULTI_VIEW
+    nointerpolation uint viewId : VIEW_ID;
+#endif
+#endif
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void NoesisVS(in In i, out Out o)
+{
+#if WITH_STEREO
+#if INSTANCED_STEREO
+    o.position = mul(NoesisVSConstantsStereo.projectionMtx[i.instanceId], float4(i.position, 0, 1));
+#if MULTI_VIEW
+    o.viewportIndex = i.instanceId;
+#else
+    o.clipDistance = dot(o.position, EyeClipEdge[i.instanceId]);
+    o.position.x *= 0.5/* * ResolvedView.HMDEyePaddingOffset*/;
+    o.position.x += (EyeOffsetScale[i.instanceId] * o.position.w) * (1.0f - 0.5/* * ResolvedView.HMDEyePaddingOffset*/);
+#endif
+#elif MOBILE_MULTI_VIEW
+    o.viewId = i.viewId;
+    o.position = mul(NoesisVSConstantsStereo.projectionMtx[i.viewId], float4(i.position, 0, 1));
+#else
+    o.position = mul(NoesisVSConstants.projectionMtx, float4(i.position, 0, 1));
+#endif
+#else
+    o.position = mul(NoesisVSConstants.projectionMtx, float4(i.position, 0, 1));
+#endif
+
+#if HAS_COLOR
+    #if LINEAR_COLOR
+        o.color FCOLOR_COMPONENT_SWIZZLE = half4(sRGBToLinear(i.color.bgr), i.color.a);
+    #else
+        o.color FCOLOR_COMPONENT_SWIZZLE = i.color.bgra;
+    #endif
+#endif
+
+#if DOWNSAMPLE
+    o.uv0 = i.uv0 + float2(i.uv1.x, i.uv1.y);
+    o.uv1 = i.uv0 + float2(i.uv1.x, -i.uv1.y);
+    o.uv2 = i.uv0 + float2(-i.uv1.x, i.uv1.y);
+    o.uv3 = i.uv0 + float2(-i.uv1.x, -i.uv1.y);
+#else
+    #if HAS_UV0
+      o.uv0 = i.uv0;
+    #endif
+    #if HAS_UV1
+      o.uv1 = i.uv1;
+    #endif
+#endif
+
+#if SDF
+    o.st1 = float4(i.uv1 * NoesisTextureSize.textureSize.xy, 1.0 / (3.0 * NoesisTextureSize.textureSize.xy));
+#endif
+
+#if HAS_COVERAGE
+    o.coverage = i.coverage;
+#endif
+
+#if HAS_RECT
+    o.rect = i.rect;
+#endif
+
+#if HAS_TILE
+    o.tile = i.tile;
+#endif
+
+#if HAS_IMAGE_POSITION
+    o.imagePos = i.imagePos;
+#endif
+}

@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="NoesisGUI.GUI.TestMapViewMode"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:design="clr-namespace:NoesisGUI.DesignTime"
+    mc:Ignorable="d"
+    d:DesignHeight="1080" 
+    d:DesignWidth="1920"
+    d:DataContext="{d:DesignInstance Type=design:DesignBaseViewMode, IsDesignTimeCreatable=True}">
+
+    <!-- 定义资源 -->
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="PlayerBackground" Color="LightBlue"/>
+        <SolidColorBrush x:Key="EconomyBackground" Color="LightGreen"/>
+        <SolidColorBrush x:Key="BattleBackground" Color="LightCoral"/>
+    </UserControl.Resources>
+
+    <Grid Margin="30,30,30,30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- 标题区域 -->
+        <Label Grid.Row="0" Content="多 DataContext ViewMode 测试" 
+               FontSize="36" FontWeight="Bold" 
+               HorizontalAlignment="Center" 
+               Background="DarkBlue" 
+               Foreground="White" 
+               Padding="20,10" Margin="0,0,0,20"/>
+        
+        <!-- 内容区域：三列布局 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- 左列：Player 数据 (绑定到 SubViewModes[Player]) -->
+            <Border Grid.Column="0" Background="{StaticResource PlayerBackground}" 
+                    Margin="5" Padding="15" CornerRadius="10"
+                    DataContext="{Binding SubViewModes[Player]}">
+                <StackPanel>
+                    <Label Content="玩家信息 [Player ViewMode]" 
+                           FontSize="24" FontWeight="Bold" 
+                           HorizontalAlignment="Center"
+                           Background="DarkBlue" 
+                           Foreground="White" 
+                           Margin="0,0,0,15"/>
+                    
+                    <!-- Player 数据显示 -->
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <Label Content="玩家名称:" FontSize="20" FontWeight="Bold" Width="100"/>
+                        <Label Content="{Binding StringMap[PlayerName].Value}" 
+                               FontSize="20" 
+                               Background="White" Padding="10,5" Width="380"/>
+                    </StackPanel>
+                    
+                    <!-- Player 数据修改 -->
+                    <TextBox Text="{Binding StringMap[PlayerName].Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             FontSize="20"
+                             Margin="0,10" Padding="10,5"
+                             Width="300" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </Border>
+            
+            <!-- 中列：Economy 数据 (绑定到 SubViewModes[Economy]) -->
+            <Border Grid.Column="1" Background="{StaticResource EconomyBackground}" 
+                    Margin="5" Padding="15" CornerRadius="10"
+                    DataContext="{Binding SubViewModes[Economy]}">
+                <StackPanel>
+                    <Label Content="经济系统 [Economy ViewMode]" 
+                           FontSize="24" FontWeight="Bold" 
+                           HorizontalAlignment="Center"
+                           Background="DarkGreen" 
+                           Foreground="White" 
+                           Margin="0,0,0,15"/>
+                    
+                    <!-- Money 测试 -->
+                    <StackPanel Margin="0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <Label Content="金币:" FontSize="20" FontWeight="Bold" Width="60"/>
+                            <Label Content="{Binding Int32Map[Money].Value}" 
+                                   FontSize="20" 
+                                   Background="Gold" Padding="10,5" Width="100" 
+                                   HorizontalContentAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                            <Button Content="+100" Margin="5,0" FontSize="16"
+                                    Command="{Binding Int32Map[Money].Add}">
+                                <Button.CommandParameter>
+                                    <System:Int32>100</System:Int32>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Content="-50" Margin="5,0" FontSize="16"
+                                    Command="{Binding Int32Map[Money].Sub}">
+                                <Button.CommandParameter>
+                                    <System:Int32>50</System:Int32>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Content="Reset" Margin="5,0" FontSize="16" 
+                                    Background="OrangeRed" Foreground="White"
+                                    Command="{Binding Int32Map[Money].Reset}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    
+                    <!-- Score 测试 -->
+                    <StackPanel Margin="0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <Label Content="积分:" FontSize="20" FontWeight="Bold" Width="60"/>
+                            <Label Content="{Binding Int32Map[Score].Value}" 
+                                   FontSize="20" 
+                                   Background="Silver" Padding="10,5" Width="100" 
+                                   HorizontalContentAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                            <Button Content="+500" Margin="5,0" FontSize="16"
+                                    Command="{Binding Int32Map[Score].Add}">
+                                <Button.CommandParameter>
+                                    <System:Int32>500</System:Int32>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Content="×2" Margin="5,0" FontSize="16"
+                                    Command="{Binding Int32Map[Score].Mul}">
+                                <Button.CommandParameter>
+                                    <System:Int32>2</System:Int32>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            
+            <!-- 右列：Battle 数据 (绑定到 SubViewModes[Battle]) -->
+            <Border Grid.Column="2" Background="{StaticResource BattleBackground}" 
+                    Margin="5" Padding="15" CornerRadius="10"
+                    DataContext="{Binding SubViewModes[Battle]}">
+                <StackPanel>
+                    <Label Content="战斗属性 [Battle ViewMode]" 
+                           FontSize="24" FontWeight="Bold" 
+                           HorizontalAlignment="Center"
+                           Background="DarkRed" 
+                           Foreground="White" 
+                           Margin="0,0,0,15"/>
+                    
+                    <!-- Speed 测试 -->
+                    <StackPanel Margin="0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <Label Content="速度:" FontSize="20" FontWeight="Bold" Width="60"/>
+                            <Label Content="{Binding FloatMap[Speed].Value}" 
+                                   FontSize="20" 
+                                   Background="LightYellow" Padding="10,5" Width="100" 
+                                   HorizontalContentAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                            <Button Content="+5.0" Margin="5,0" FontSize="16"
+                                    Command="{Binding FloatMap[Speed].Add}">
+                                <Button.CommandParameter>
+                                    <System:Double>5.0</System:Double>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Content="×1.5" Margin="5,0" FontSize="16"
+                                    Command="{Binding FloatMap[Speed].Mul}">
+                                <Button.CommandParameter>
+                                    <System:Double>1.5</System:Double>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Content="Reset" Margin="5,0" FontSize="16" 
+                                    Background="Purple" Foreground="White"
+                                    Command="{Binding FloatMap[Speed].Reset}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    
+                    <!-- Damage 测试 -->
+                    <StackPanel Margin="0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,5">
+                            <Label Content="伤害:" FontSize="20" FontWeight="Bold" Width="60"/>
+                            <Label Content="{Binding FloatMap[Damage].Value}" 
+                                   FontSize="20" 
+                                   Background="Pink" Padding="10,5" Width="100" 
+                                   HorizontalContentAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                            <Button Content="+20%" Margin="5,0" FontSize="16"
+                                    Command="{Binding FloatMap[Damage].Add}">
+                                <Button.CommandParameter>
+                                    <System:Double>20.0</System:Double>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Content="÷2" Margin="5,0" FontSize="16"
+                                    Command="{Binding FloatMap[Damage].Div}">
+                                <Button.CommandParameter>
+                                    <System:Double>2.0</System:Double>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

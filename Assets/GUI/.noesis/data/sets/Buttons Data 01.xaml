@@ -1,0 +1,11 @@
+<vdctx:Buttons xmlns:vdctx="clr-namespace:GUI">
+  <vdctx:Buttons.SettingsCommand>
+    <MessageCommand Message="Command Executed" IsEnabled="True"/>
+  </vdctx:Buttons.SettingsCommand>
+  <vdctx:Buttons.StartCommand>
+    <MessageCommand Message="Command Executed" IsEnabled="True"/>
+  </vdctx:Buttons.StartCommand>
+  <vdctx:Buttons.ExitCommand>
+    <MessageCommand Message="Command Executed" IsEnabled="True"/>
+  </vdctx:Buttons.ExitCommand>
+</vdctx:Buttons>
