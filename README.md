@@ -159,13 +159,44 @@ proxy.map.Add("key", value);    // 自动调用 NotifyMapPostAdd
 
 ## 🚀 快速开始
 
+### ⚠️ 平台支持
+
+**当前版本仅支持 Windows 平台**
+- ✅ 仓库包含预编译的 Windows Editor DLL，可直接使用
+- ✅ 克隆后可直接双击 `NoesisDemo.uproject` 打开编辑器
+- ⚠️ **Mac/Linux 用户**：需要自行编译 C++ 代码后才能使用
+
 ### 环境要求
 
+- **操作系统**: Windows 10/11
 - **Unreal Engine**: 5.4
 - **NoesisGUI 插件**: 3.2+
 - **PuerTS 插件**: 最新版
 - **TypeScript**: 需要全局安装 `tsc` 命令
+- **Visual Studio**（可选）：仅在需要修改 C++ 代码时必须
 - **Noesis Studio**（可选）：用于 XAML 可视化设计，参见 [Noesis Studio with Unreal](https://www.noesisengine.com/forums/viewtopic.php?t=3610)
+
+### 📦 安装步骤
+
+**Windows 用户（推荐）**：
+```bash
+# 1. 克隆仓库
+git clone https://github.com/No-needto-recall/NoesisDemo.git
+
+# 2. 直接双击 NoesisDemo.uproject 打开项目
+# ✅ 无需编译，开箱即用！
+```
+
+**Mac/Linux 用户**：
+```bash
+# 1. 克隆仓库
+git clone https://github.com/No-needto-recall/NoesisDemo.git
+
+# 2. 编译 C++ 代码（首次使用必须）
+# 参考 Unreal Engine 官方文档进行平台编译配置
+
+# 3. 双击 NoesisDemo.uproject 打开项目
+```
 
 ### 🎨 使用 Noesis Studio 开发
 

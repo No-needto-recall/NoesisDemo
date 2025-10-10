@@ -114,6 +114,22 @@ Saved/ShaderDebugInfo/
 *.lib
 !Plugins/*/ThirdParty/**/*.lib  # 保留第三方库
 
+# 保留编辑器 DLL（Windows 预编译二进制文件）
+# 主项目模块
+!/Binaries/Win64/UnrealEditor-NoesisDemo.dll
+!/Binaries/Win64/UnrealEditor-NoesisViewMode.dll
+# NoesisGUI 插件模块
+!/Plugins/NoesisGUI/Binaries/Win64/UnrealEditor-NoesisBlueprint.dll
+!/Plugins/NoesisGUI/Binaries/Win64/UnrealEditor-NoesisEditor.dll
+!/Plugins/NoesisGUI/Binaries/Win64/UnrealEditor-NoesisRuntime.dll
+# PuerTS 插件模块
+!/Plugins/Puerts/Binaries/Win64/UnrealEditor-DeclarationGenerator.dll
+!/Plugins/Puerts/Binaries/Win64/UnrealEditor-JsEnv.dll
+!/Plugins/Puerts/Binaries/Win64/UnrealEditor-ParamDefaultValueMetas.dll
+!/Plugins/Puerts/Binaries/Win64/UnrealEditor-Puerts.dll
+!/Plugins/Puerts/Binaries/Win64/UnrealEditor-PuertsEditor.dll
+!/Plugins/Puerts/Binaries/Win64/UnrealEditor-WasmCore.dll
+
 # 忽略MinGW和QuickJS运行时库
 /Binaries/Win64/libgcc_s_seh-1.dll
 /Binaries/Win64/libwinpthread-1.dll
