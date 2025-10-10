@@ -176,19 +176,46 @@ proxy.map.Add("key", value);    // Automatically calls NotifyMapPostAdd
 - **Visual Studio** (Optional): Required only when modifying C++ code
 - **Noesis Studio** (Optional): For XAML visual design, see [Noesis Studio with Unreal](https://www.noesisengine.com/forums/viewtopic.php?t=3610)
 
-### 📦 Installation Steps
+### 📦 Getting the Project
 
-**Windows Users (Recommended)**:
+#### Option 1: Download Release Version (Recommended ⭐, No Git Required)
+
+1. Visit the [Releases page](https://github.com/No-needto-recall/NoesisDemo/releases)
+2. Download the latest `NoesisDemo-vX.X.X-Source-Full.zip`
+3. Extract to a local directory
+4. Double-click `NoesisDemo.uproject` to open the project
+
+**Benefits**:
+- ✅ Includes all LFS files (pre-compiled DLLs)
+- ✅ No Git or Git LFS required
+- ✅ Extract and use, ready out of the box
+- ✅ Perfect for users unfamiliar with Git
+
+#### Option 2: Use Git Clone (Recommended for Developers)
+
 ```bash
-# 1. Clone the repository (No Git LFS required)
+# 1. Clone the repository
 git clone https://github.com/No-needto-recall/NoesisDemo.git
 
 # 2. Double-click NoesisDemo.uproject to open the project
 # ✅ No compilation needed, ready out of the box!
-# ✅ No Git LFS installation required (Fixed)
 ```
 
-> **Note**: If you encounter "plugin not found" errors, please ensure you're using the latest repository version (after 2025-10-10). Earlier versions had Git LFS configuration issues, which have been fixed.
+**Benefits**:
+- ✅ Supports version updates (git pull)
+- ✅ Suitable for development and code contributions
+- ✅ Access to complete commit history
+
+#### ⚠️ Not Recommended: Using "Download ZIP" Button
+
+GitHub's "Download ZIP" button **cannot download Git LFS files** (editor DLLs), resulting in the need to recompile.
+
+**If you accidentally used "Download ZIP"**:
+- Project will prompt to rebuild modules
+- Requires Visual Studio 2022 with C++ development tools
+- Compilation takes approximately 5-15 minutes
+
+**Solution**: Delete and re-download using "Option 1" or "Option 2" above.
 
 **Mac/Linux Users**:
 ```bash

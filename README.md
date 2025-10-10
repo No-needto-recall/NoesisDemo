@@ -176,19 +176,46 @@ proxy.map.Add("key", value);    // 自动调用 NotifyMapPostAdd
 - **Visual Studio**（可选）：仅在需要修改 C++ 代码时必须
 - **Noesis Studio**（可选）：用于 XAML 可视化设计，参见 [Noesis Studio with Unreal](https://www.noesisengine.com/forums/viewtopic.php?t=3610)
 
-### 📦 安装步骤
+### 📦 获取项目
 
-**Windows 用户（推荐）**：
+#### 方式 1：下载 Release 版本（推荐 ⭐，无需 Git）
+
+1. 访问 [Releases 页面](https://github.com/No-needto-recall/NoesisDemo/releases)
+2. 下载最新的 `NoesisDemo-vX.X.X-Source-Full.zip`
+3. 解压到本地目录
+4. 双击 `NoesisDemo.uproject` 打开项目
+
+**优点**：
+- ✅ 包含所有 LFS 文件（预编译 DLL）
+- ✅ 无需 Git 和 Git LFS
+- ✅ 解压即用，开箱即用
+- ✅ 适合不熟悉 Git 的用户
+
+#### 方式 2：使用 Git Clone（开发者推荐）
+
 ```bash
-# 1. 克隆仓库（无需 Git LFS）
+# 1. 克隆仓库
 git clone https://github.com/No-needto-recall/NoesisDemo.git
 
 # 2. 直接双击 NoesisDemo.uproject 打开项目
 # ✅ 无需编译，开箱即用！
-# ✅ 无需安装 Git LFS（已修复）
 ```
 
-> **注意**：如果遇到"找不到插件"的错误，请确保使用最新的仓库版本（2025-10-10 之后）。早期版本存在 Git LFS 配置问题，已修复。
+**优点**：
+- ✅ 支持版本更新（git pull）
+- ✅ 适合参与开发和贡献代码
+- ✅ 可以查看完整提交历史
+
+#### ⚠️ 不推荐：使用 "Download ZIP" 按钮
+
+GitHub 的 "Download ZIP" 按钮**无法下载 Git LFS 文件**（编辑器 DLL），会导致需要重新编译。
+
+**如果不小心使用了 "Download ZIP"**：
+- 打开项目时会提示重新编译模块
+- 需要安装 Visual Studio 2022 和 C++ 开发工具
+- 编译时间约 5-15 分钟
+
+**解决方法**：删除后使用上述"方式 1"或"方式 2"重新获取项目。
 
 **Mac/Linux 用户**：
 ```bash
