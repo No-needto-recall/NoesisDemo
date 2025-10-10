@@ -159,13 +159,44 @@ proxy.map.Add("key", value);    // Automatically calls NotifyMapPostAdd
 
 ## 🚀 Quick Start
 
+### ⚠️ Platform Support
+
+**Current version supports Windows only**
+- ✅ Repository includes pre-compiled Windows Editor DLLs, ready to use
+- ✅ Clone and double-click `NoesisDemo.uproject` to open the editor directly
+- ⚠️ **Mac/Linux Users**: Must compile C++ code manually before use
+
 ### Requirements
 
+- **Operating System**: Windows 10/11
 - **Unreal Engine**: 5.4
 - **NoesisGUI Plugin**: 3.2+
 - **PuerTS Plugin**: Latest version
 - **TypeScript**: Global `tsc` command required
+- **Visual Studio** (Optional): Required only when modifying C++ code
 - **Noesis Studio** (Optional): For XAML visual design, see [Noesis Studio with Unreal](https://www.noesisengine.com/forums/viewtopic.php?t=3610)
+
+### 📦 Installation Steps
+
+**Windows Users (Recommended)**:
+```bash
+# 1. Clone the repository
+git clone https://github.com/No-needto-recall/NoesisDemo.git
+
+# 2. Double-click NoesisDemo.uproject to open the project
+# ✅ No compilation needed, ready out of the box!
+```
+
+**Mac/Linux Users**:
+```bash
+# 1. Clone the repository
+git clone https://github.com/No-needto-recall/NoesisDemo.git
+
+# 2. Compile C++ code (required for first use)
+# Refer to Unreal Engine official documentation for platform compilation setup
+
+# 3. Double-click NoesisDemo.uproject to open the project
+```
 
 ### 🎨 Developing with Noesis Studio
 
