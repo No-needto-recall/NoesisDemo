@@ -182,6 +182,15 @@ node_modules/
 Plugins/Puerts/Source/CSharpParamDefaultValueMetas/*.csproj
 ts_file_versions_info.json
 
+# Visual Studio 解决方案文件（由 UE 自动生成，每个开发者路径不同）
+*.sln
+
+# PuerTS WASM 编译产物
+Content/JavaScript/wasm/*.wasm
+
+# TypeScript Source Map 文件
+Content/JavaScript/**/*.js.map
+
 # 忽略插件编译产物（除了第三方库）
 /Plugins/*/Binaries/
 !/Plugins/*/ThirdParty/
