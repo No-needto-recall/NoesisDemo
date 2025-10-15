@@ -54,16 +54,18 @@
 !Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Src/Packages/
 
 # WPF/WinForms 生成的文件（排除 NoesisGUI SDK）
-# 先排除 NoesisGUI SDK 的 Bin 目录
-!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Bin/
-!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Lib/
-# 然后应用常规的 Bin/Obj 忽略规则
 [Bb]in/
 [Oo]bj/
 */[Bb]in/
 */[Oo]bj/
+# 排除 NoesisGUI SDK 的 Bin/Lib 目录（由 .gitattributes 中的 LFS 规则管理）
+!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Bin/
+!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Lib/
 **/[Bb]in/
 **/[Oo]bj/
+# 排除 NoesisGUI SDK 的 Bin/Lib 目录（由 .gitattributes 中的 LFS 规则管理）
+!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Bin/**
+!Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Lib/**
 
 # NuGet 恢复信息
 project.lock.json
@@ -211,10 +213,6 @@ ts_file_versions_info.json
 
 # 但是保留必要的运行时 DLL
 !/Plugins/Puerts/Binaries/Win64/libnode.dll
-
-# NoesisGUI 插件必要的运行时库
-!/Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Bin/windows_x86_64/Noesis.dll
-!/Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Lib/windows_x86_64/Noesis.lib
 !/Plugins/NoesisGUI/Binaries/Win64/Noesis.dll
 ClaudeTmp
 
