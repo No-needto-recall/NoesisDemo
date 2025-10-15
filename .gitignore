@@ -176,7 +176,8 @@ Saved/ShaderDebugInfo/
 /Binaries/Win64/tbbmalloc.dll
 Binaries/Win64/BlackBoxTurret.exe
 node_modules/
-Plugins/Puerts/Source/CSharpParamDefaultValueMetas
+# 忽略有问题的 Puerts UBT 插件文件（LFS 问题）
+Plugins/Puerts/Source/CSharpParamDefaultValueMetas/*.csproj
 ts_file_versions_info.json
 
 # 忽略插件编译产物（除了第三方库）
@@ -205,6 +206,8 @@ ts_file_versions_info.json
 /Plugins/Puerts/**/*.sup.lib
 /Plugins/Puerts/**/*.sup.exp
 /Plugins/Puerts/**/obj/
+# 忽略 UBT 自动生成的 .csproj 文件（覆盖上面的 Source/** 规则）
+/Plugins/Puerts/Source/CSharpParamDefaultValueMetas/*.csproj
 
 # 但是保留必要的运行时 DLL
 !/Plugins/Puerts/Binaries/Win64/libnode.dll
@@ -213,7 +216,6 @@ ts_file_versions_info.json
 !/Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Bin/windows_x86_64/Noesis.dll
 !/Plugins/NoesisGUI/Source/Noesis/NoesisSDK/Lib/windows_x86_64/Noesis.lib
 !/Plugins/NoesisGUI/Binaries/Win64/Noesis.dll
-Plugins/Puerts/Source/CSharpParamDefaultValueMetas/CSharpParamDefaultValueMetas.ubtplugin.csproj.props
 ClaudeTmp
 
 #################################
